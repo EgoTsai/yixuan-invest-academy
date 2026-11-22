@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>易軒的投資片場 🎬 16歲從0開始｜動畫×特效學正確投資</title>
+  <meta name="description" content="專為16歲易軒設計的互動動畫投資學習網站：融合桌面大戰、機甲核心、奇幻馬戲團與災難電影特效，少字多圖＋語音朗讀，從0建立正確理財與投資觀念。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Sticky Cinema Topbar -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="brand-btn" id="btn-home-logo" aria-label="回到首頁">
+        <span class="brand-badge">🎬</span>
+        <span>
+          <span class="brand-title">易軒的投資片場</span>
+          <span class="brand-sub">16歲 × 動畫特效學投資</span>
+        </span>
+      </button>
+
+      <div class="topbar-stats">
+        <div class="stat-chip" title="通關進度">
+          <span>⭐</span>
+          <span class="num" id="stat-stars">0/6</span>
+        </div>
+        <div class="stat-chip" title="能量金幣">
+          <span>🪙</span>
+          <span class="num" id="stat-coins">0</span>
+        </div>
+        <button class="tool-btn active" id="btn-toggle-voice">🔊 語音朗讀：開</button>
+        <button class="tool-btn active" id="btn-toggle-sfx">🎵 電影音效：開</button>
+        <button class="tool-btn sandbox-shortcut" id="btn-open-sandbox-top">🌋 10年電影模擬</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-wrap">
+    <!-- ==================== VIEW 1: HOME HUB ==================== -->
+    <section id="view-home" class="view-section">
+      <!-- Hero Cinema Stage -->
+      <div class="hero-stage">
+        <img class="hero-bg-img" src="assets/world_disaster_vfx.jpg" alt="" />
+        <div class="hero-scrim"></div>
+
+        <div class="hero-content">
+          <h1 class="hero-title">
+            易軒，用<span class="accent">看電影玩動畫</span><br />
+            從 0 學會正確投資！
+          </h1>
+          <p class="hero-short-line">
+            <span class="hero-tag">👀 免看一堆字</span>
+            <span class="hero-tag">🔊 全程中文唸給你聽</span>
+            <span class="hero-tag">🎮 動手玩特效秒懂</span>
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-gold" id="btn-hero-start">🎬 第 1 關：立刻開拍！</button>
+            <button class="btn btn-cyan" id="btn-hero-speak">🔊 聽導覽介紹</button>
+          </div>
+        </div>
+
+        <div class="hero-visual-panel">
+          <div class="hero-poster-frame">
+            <img src="assets/world_launch_ark.jpg" alt="16歲財富起飛方舟" />
+          </div>
+          <div class="world-cast-strip">
+            <span class="cast-pill">🔥 桌面大戰</span>
+            <span class="cast-pill">🤖 無機殺手核心</span>
+            <span class="cast-pill">🎪 奇幻馬戲團</span>
+            <span class="cast-pill">🌋 災難特效</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visual Badge Progress Strip -->
+      <div class="mission-bar" aria-label="勳章進度條">
+        <div class="mission-bar-left">
+          <span>🏆 投資勳章收集</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="home-progress-fill"></div>
+        </div>
+        <div class="badge-row" id="home-badge-row"></div>
+      </div>
+
+      <!-- 6 Movie World Chapters -->
+      <div class="section-heading">
+        <h2>🎞️ 選一個片場開始冒險（共 6 關）</h2>
+      </div>
+      <div class="chapter-grid" id="chapter-grid"></div>
+
+      <!-- Bonus Boss Simulator Banner -->
+      <div class="sandbox-banner">
+        <img class="sandbox-banner-bg" src="assets/world_disaster_vfx.jpg" alt="" />
+        <div class="sandbox-banner-scrim"></div>
+        <div class="sandbox-banner-content">
+          <h3>🎬 終極片場：16歲 ➔ 26歲「末日投資電影模擬」</h3>
+          <p>☄️ 隕石股災 × 🚨 詐騙入侵 × 🌋 通膨火山！零風險試玩 10 年！</p>
+        </div>
+        <div class="sandbox-banner-cta">
+          <button class="btn btn-crimson" id="btn-open-sandbox-banner">🚀 立刻開拍 10 年大片！</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 2: LESSON STAGE ==================== -->
+    <section id="view-stage" class="view-section hidden">
+      <div class="stage-header">
+        <div class="stage-title-group">
+          <button class="btn btn-ghost" id="btn-back-home" style="padding:10px 16px;font-size:0.95rem;">⬅️ 回片場大廳</button>
+          <span class="stat-chip" id="stage-world-badge">🔥 桌面大戰</span>
+          <h1 id="stage-title">第 1 關</h1>
+        </div>
+      </div>
+
+      <!-- 3-Step Visual Stepper -->
+      <div class="step-tabs">
+        <button class="step-tab active" id="tab-play">① 🎬 玩動畫實驗</button>
+        <button class="step-tab" id="tab-quiz">② 🎯 3題圖示闖關</button>
+        <button class="step-tab" id="tab-medal" disabled>③ 🏆 領專屬勳章</button>
+      </div>
+
+      <!-- STEP 1: Interactive Canvas Animation Theater -->
+      <div id="pane-play" class="theater-shell">
+        <div class="speech-strip">
+          <div class="speech-strip-text">
+            <span class="speech-emoji">🎬</span>
+            <span id="play-prompt-text">點按鈕玩玩看！</span>
+          </div>
+          <button class="btn-speak" id="btn-speak-intro">🔊 唸給我聽</button>
+        </div>
+
+        <div class="canvas-frame">
+          <canvas id="stage-canvas"></canvas>
+        </div>
+
+        <div class="controls-deck" id="stage-controls"></div>
+
+        <div class="takeaway-bar">
+          <div class="takeaway-text">
+            <span>💡</span>
+            <span id="play-takeaway-text"></span>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+            <button class="btn-speak" id="btn-speak-takeaway">🔊 唸重點</button>
+            <button class="btn btn-emerald" id="btn-go-quiz">🎯 懂了！挑戰 3 題拿勳章 ➡️</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Icon-First 3-Question Quiz -->
+      <div id="pane-quiz" class="quiz-shell hidden">
+        <div class="quiz-progress-dots" id="quiz-dots"></div>
+
+        <div class="quiz-prompt-box">
+          <div class="quiz-big-icon" id="quiz-icon">🧋</div>
+          <h2 class="quiz-question-text" id="quiz-question">問題載入中...</h2>
+          <button class="btn-speak" id="btn-speak-quiz">🔊 再唸一次題目</button>
+        </div>
+
+        <div class="quiz-options-grid" id="quiz-options"></div>
+        <div id="quiz-feedback" class="quiz-feedback hidden"></div>
+      </div>
+
+      <!-- STEP 3: Victory Medal Celebration -->
+      <div id="pane-medal" class="medal-card hidden">
+        <div class="medal-emblem" id="medal-icon">🏆</div>
+        <h2 id="medal-name">恭喜通關！</h2>
+        <p class="medal-slogan" id="medal-slogan"></p>
+        <div class="medal-actions">
+          <button class="btn btn-gold" id="btn-medal-next">▶️ 挑戰下一關</button>
+          <button class="btn btn-ghost" id="btn-medal-home">🏠 回片場大廳</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 3: 10-YEAR DISASTER SANDBOX ==================== -->
+    <section id="view-sandbox" class="view-section hidden">
+      <div class="stage-header">
+        <div class="stage-title-group">
+          <button class="btn btn-ghost" id="btn-sandbox-back" style="padding:10px 16px;font-size:0.95rem;">⬅️ 回片場大廳</button>
+          <h1>🎬 16歲 ➔ 26歲 末日投資電影模擬</h1>
+        </div>
+        <button class="btn-speak" id="btn-speak-sandbox">🔊 聽玩法說明</button>
+      </div>
+
+      <div class="theater-shell">
+        <div class="canvas-frame">
+          <canvas id="sandbox-canvas"></canvas>
+        </div>
+
+        <!-- Interactive Disaster Choice Popup -->
+        <div id="sandbox-event-box" class="event-modal-bar hidden"></div>
+
+        <!-- Final Movie Grade Poster -->
+        <div id="sandbox-result-box" class="result-poster hidden"></div>
+
+        <!-- Auto-Balancing 100% Portfolio Sliders -->
+        <div class="sandbox-setup-grid" style="margin-top:16px;">
+          <div class="alloc-card">
+            <div class="alloc-head">
+              <span>🛡️ 現金護盾</span>
+              <span class="alloc-pct" id="sb-cash-val">30%</span>
+            </div>
+            <input type="range" min="0" max="100" step="5" value="30" id="sb-cash" class="big-range" />
+            <small style="color:#94a3b8;font-weight:700;">超穩不跌，但怕通膨微縮水</small>
+          </div>
+
+          <div class="alloc-card">
+            <div class="alloc-head">
+              <span>🎪 ETF 500家大禮包</span>
+              <span class="alloc-pct" id="sb-etf-val">60%</span>
+            </div>
+            <input type="range" min="0" max="100" step="5" value="60" id="sb-etf" class="big-range" />
+            <small style="color:#22e584;font-weight:700;">分散穩健成長，主力推薦！</small>
+          </div>
+
+          <div class="alloc-card">
+            <div class="alloc-head">
+              <span>🎲 單一刺激飆股</span>
+              <span class="alloc-pct" id="sb-risky-val">10%</span>
+            </div>
+            <input type="range" min="0" max="100" step="5" value="10" id="sb-risky" class="big-range" />
+            <small style="color:#ff7a2f;font-weight:700;">可能暴漲，也可能瞬間腰斬！</small>
+          </div>
+        </div>
+
+        <div class="controls-deck">
+          <button class="btn btn-gold" id="btn-sandbox-run">🎬 開拍 10 年投資電影！（虛擬 $10,000 起步）</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
