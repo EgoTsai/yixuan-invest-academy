@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>易軒的投資片場 🎬 16歲從0開始｜動畫×特效學正確投資</title>
-  <meta name="description" content="專為16歲易軒設計的互動動畫投資學習網站：融合桌面大戰、機甲核心、奇幻馬戲團與災難電影特效，少字多圖＋語音朗讀，從0建立正確理財與投資觀念。" />
+  <title>易軒的投資片場 🎬 16歲從0開始｜漫畫情境跑馬燈×動畫特效學投資</title>
+  <meta name="description" content="專為16歲易軒設計的互動動畫投資學習網站：融合桌面大戰、機甲核心、奇幻馬戲團與災難電影特效，用漫畫情境跑馬燈與動畫實驗，從0建立正確理財與投資觀念。" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700;900&display=swap" rel="stylesheet" />
@@ -20,7 +20,7 @@
         <span class="brand-badge">🎬</span>
         <span>
           <span class="brand-title">易軒的投資片場</span>
-          <span class="brand-sub">16歲 × 動畫特效學投資</span>
+          <span class="brand-sub">16歲 × 漫畫跑馬燈×動畫特效</span>
         </span>
       </button>
 
@@ -33,7 +33,6 @@
           <span>🪙</span>
           <span class="num" id="stat-coins">0</span>
         </div>
-        <button class="tool-btn active" id="btn-toggle-voice">🔊 語音朗讀：開</button>
         <button class="tool-btn active" id="btn-toggle-sfx">🎵 電影音效：開</button>
         <button class="tool-btn sandbox-shortcut" id="btn-open-sandbox-top">🌋 10年電影模擬</button>
       </div>
@@ -50,17 +49,17 @@
 
         <div class="hero-content">
           <h1 class="hero-title">
-            易軒，用<span class="accent">看電影玩動畫</span><br />
+            易軒，用<span class="accent">漫畫＋特效動畫</span><br />
             從 0 學會正確投資！
           </h1>
           <p class="hero-short-line">
             <span class="hero-tag">👀 免看一堆字</span>
-            <span class="hero-tag">🔊 全程中文唸給你聽</span>
+            <span class="hero-tag">💬 漫畫情境跑馬燈</span>
             <span class="hero-tag">🎮 動手玩特效秒懂</span>
           </p>
           <div class="hero-actions">
             <button class="btn btn-gold" id="btn-hero-start">🎬 第 1 關：立刻開拍！</button>
-            <button class="btn btn-cyan" id="btn-hero-speak">🔊 聽導覽介紹</button>
+            <button class="btn btn-cyan" id="btn-hero-comics">💬 看漫畫情境跑馬燈</button>
           </div>
         </div>
 
@@ -76,6 +75,9 @@
           </div>
         </div>
       </div>
+
+      <!-- Home Comic Scenario Marquee -->
+      <div id="home-comic-marquee"></div>
 
       <!-- Visual Badge Progress Strip -->
       <div class="mission-bar" aria-label="勳章進度條">
@@ -120,19 +122,20 @@
 
       <!-- 3-Step Visual Stepper -->
       <div class="step-tabs">
-        <button class="step-tab active" id="tab-play">① 🎬 玩動畫實驗</button>
+        <button class="step-tab active" id="tab-play">① 💬 漫畫＋動畫實驗</button>
         <button class="step-tab" id="tab-quiz">② 🎯 3題圖示闖關</button>
         <button class="step-tab" id="tab-medal" disabled>③ 🏆 領專屬勳章</button>
       </div>
 
-      <!-- STEP 1: Interactive Canvas Animation Theater -->
+      <!-- STEP 1: Chapter Comic Marquee + Interactive Canvas Animation Theater -->
       <div id="pane-play" class="theater-shell">
-        <div class="speech-strip">
-          <div class="speech-strip-text">
-            <span class="speech-emoji">🎬</span>
-            <span id="play-prompt-text">點按鈕玩玩看！</span>
-          </div>
-          <button class="btn-speak" id="btn-speak-intro">🔊 唸給我聽</button>
+        <!-- Chapter 4-Panel Comic Scenario Marquee -->
+        <div id="stage-comic-marquee"></div>
+
+        <!-- Live Comic Reaction Speech Strip -->
+        <div class="comic-live-banner" id="stage-comic-reaction">
+          <span class="comic-live-avatar" id="stage-react-avatar">🔥 阿火</span>
+          <div class="comic-live-bubble" id="stage-react-bubble">點下面按鈕玩玩看！</div>
         </div>
 
         <div class="canvas-frame">
@@ -146,10 +149,7 @@
             <span>💡</span>
             <span id="play-takeaway-text"></span>
           </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-            <button class="btn-speak" id="btn-speak-takeaway">🔊 唸重點</button>
-            <button class="btn btn-emerald" id="btn-go-quiz">🎯 懂了！挑戰 3 題拿勳章 ➡️</button>
-          </div>
+          <button class="btn btn-emerald" id="btn-go-quiz">🎯 懂了！挑戰 3 題拿勳章 ➡️</button>
         </div>
       </div>
 
@@ -160,7 +160,6 @@
         <div class="quiz-prompt-box">
           <div class="quiz-big-icon" id="quiz-icon">🧋</div>
           <h2 class="quiz-question-text" id="quiz-question">問題載入中...</h2>
-          <button class="btn-speak" id="btn-speak-quiz">🔊 再唸一次題目</button>
         </div>
 
         <div class="quiz-options-grid" id="quiz-options"></div>
@@ -186,10 +185,14 @@
           <button class="btn btn-ghost" id="btn-sandbox-back" style="padding:10px 16px;font-size:0.95rem;">⬅️ 回片場大廳</button>
           <h1>🎬 16歲 ➔ 26歲 末日投資電影模擬</h1>
         </div>
-        <button class="btn-speak" id="btn-speak-sandbox">🔊 聽玩法說明</button>
       </div>
 
       <div class="theater-shell">
+        <div class="comic-live-banner" id="sandbox-comic-reaction">
+          <span class="comic-live-avatar" id="sandbox-react-avatar">🎬 導演</span>
+          <div class="comic-live-bubble" id="sandbox-react-bubble">「拉好下面 3 個比例，按開拍挑戰 10 年災難大片！」</div>
+        </div>
+
         <div class="canvas-frame">
           <canvas id="sandbox-canvas"></canvas>
         </div>

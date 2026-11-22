@@ -1,12 +1,10 @@
 /* ============================================================
-   audio.js — Web Audio API 電影特效音效 + 台灣中文語音播報 (TTS)
+   audio.js — Web Audio API 電影特效音效引擎（純音效，無語音朗讀）
    ============================================================ */
 
 export const AudioEngine = (() => {
   let ctx = null;
   let sfxEnabled = true;
-  let voiceAuto = true;
-  let preferredVoice = null;
 
   function ensureCtx() {
     if (!ctx) {
@@ -19,57 +17,8 @@ export const AudioEngine = (() => {
     return ctx;
   }
 
-  function loadVoices() {
-    if (!('speechSynthesis' in window)) return;
-    const voices = window.speechSynthesis.getVoices();
-    if (!voices || !voices.length) return;
-    preferredVoice =
-      voices.find(v => v.lang === 'zh-TW' && /Mei-Jia|HsiaoChen|Yating|Google/i.test(v.name)) ||
-      voices.find(v => v.lang === 'zh-TW') ||
-      voices.find(v => v.lang.startsWith('zh')) ||
-      null;
-  }
-
-  if ('speechSynthesis' in window) {
-    loadVoices();
-    window.speechSynthesis.onvoiceschanged = loadVoices;
-  }
-
-  function speak(text, force = false) {
-    if (!('speechSynthesis' in window)) return;
-    if (!force && !voiceAuto) return;
-    try {
-      window.speechSynthesis.cancel();
-      // Remove emojis so TTS reads cleanly
-      const clean = String(text)
-        .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, '')
-        .replace(/\s+/g, ' ')
-        .trim();
-      if (!clean) return;
-      const u = new SpeechSynthesisUtterance(clean);
-      u.lang = 'zh-TW';
-      u.rate = 0.96;
-      u.pitch = 1.05;
-      if (preferredVoice) u.voice = preferredVoice;
-      window.speechSynthesis.speak(u);
-    } catch (_) {
-      // Ignore speech errors on restricted devices
-    }
-  }
-
-  function stopSpeak() {
-    if ('speechSynthesis' in window) {
-      try { window.speechSynthesis.cancel(); } catch (_) {}
-    }
-  }
-
   function setSfx(on) { sfxEnabled = !!on; }
   function getSfx() { return sfxEnabled; }
-  function setVoiceAuto(on) {
-    voiceAuto = !!on;
-    if (!voiceAuto) stopSpeak();
-  }
-  function getVoiceAuto() { return voiceAuto; }
 
   // ---- Synthesized Movie & Game SFX ----
   function playTone(freq, duration, type = 'sine', vol = 0.16, slideTo = null, delay = 0) {
@@ -174,12 +123,8 @@ export const AudioEngine = (() => {
   };
 
   return {
-    speak,
-    stopSpeak,
     setSfx,
     getSfx,
-    setVoiceAuto,
-    getVoiceAuto,
     sfx
   };
 })();

@@ -231,7 +231,7 @@ function drawCyberDrone(ctx, x, y, scale, t, mood = 'happy') {
 // ============================================================
 // SCENE 1: 桌面大戰 — 通膨怪獸 vs 投資武器
 // ============================================================
-function mountDesktopInflation(canvas, controlsEl, onSpeak) {
+function mountDesktopInflation(canvas, controlsEl, onReact) {
   const { ctx, getSize, cleanup } = setupCanvas(canvas);
   const particles = [];
   let mode = 'today'; // 'today' | 'drawer' | 'invest'
@@ -251,18 +251,18 @@ function mountDesktopInflation(canvas, controlsEl, onSpeak) {
     const { W, H } = getSize();
     if (next === 'today') {
       AudioEngine.sfx.click();
-      onSpeak('今天手上一百元，剛好可以買兩杯珍珠奶茶！');
+      onReact({ avatar: '🔥 阿火', line: '「今天 $100，剛好可以買 2 杯珍奶 🧋🧋！」', tone: 'gold' });
     } else if (next === 'drawer') {
       AudioEngine.sfx.alarm();
       AudioEngine.sfx.explosion();
       triggerShake(canvas.parentElement);
       spawnBurst(particles, W * 0.68, H * 0.48, 36, ['#ff4757', '#ff7a2f', '#ffd166'], 6, 5);
-      onSpeak('糟糕！放抽屜二十年，通膨怪獸把物價變貴，錢縮水只剩半杯珍奶！');
+      onReact({ avatar: '👾 通膨怪獸', line: '「放抽屜 20 年，物價變貴！$100 只剩半杯珍奶！」', tone: 'crimson' });
     } else if (next === 'invest') {
       AudioEngine.sfx.slash();
       AudioEngine.sfx.coin();
       spawnBurst(particles, W * 0.55, H * 0.45, 50, ['#ffb800', '#22e584', '#00d4ff', '#ffffff'], 7, 5);
-      onSpeak('太帥啦！阿火用投資讓錢去好公司工作，二十年後變出四杯珍奶，打飛通膨怪獸！');
+      onReact({ avatar: '⚔️ 劍士阿火', line: '「投資讓錢上班變 $380！變出 4 杯珍奶打飛怪獸！」', tone: 'emerald' });
     }
   }
 
@@ -455,7 +455,7 @@ function mountDesktopInflation(canvas, controlsEl, onSpeak) {
 // ============================================================
 // SCENE 2: 無機殺手 — 複利雪球反應爐 (16歲 vs 36歲)
 // ============================================================
-function mountDroneCompound(canvas, controlsEl, onSpeak) {
+function mountDroneCompound(canvas, controlsEl, onReact) {
   const { ctx, getSize, cleanup } = setupCanvas(canvas);
   let age = 26;
   let playing = false;
@@ -512,7 +512,7 @@ function mountDroneCompound(canvas, controlsEl, onSpeak) {
     slider.value = 16;
     playing = true;
     AudioEngine.sfx.shield();
-    onSpeak('啟動複利反應爐！看十六歲的黃色雪球，越滾越大，把晚二十年開始的遠遠甩在後面！');
+    onReact({ avatar: '🤖 小鐵', line: '「複利反應爐全速運轉！看 16 歲黃球越滾越巨大！」', tone: 'gold' });
   };
 
   doubleBtn.onclick = () => {
@@ -520,10 +520,10 @@ function mountDroneCompound(canvas, controlsEl, onSpeak) {
     doubleBtn.classList.toggle('btn-cyan', doubleLate);
     doubleBtn.classList.toggle('btn-ghost', !doubleLate);
     AudioEngine.sfx.laser();
-    onSpeak(
+    onReact(
       doubleLate
-        ? '哇！就算三十六歲組每個月投兩倍的錢，到六十歲還是輸給十六歲開始的易軒！'
-        : '回到兩組每個月都投一千元比較！'
+        ? { avatar: '🤖 小鐵驚呆', line: '「36 歲每月投雙倍 ($2,000)，竟然還是追不上 16 歲！」', tone: 'cyan' }
+        : { avatar: '🤖 小鐵', line: '「回到每月各投 $1,000 PK，16 歲大勝 4 倍以上！」', tone: 'gold' }
     );
   };
 
@@ -686,7 +686,7 @@ function mountDroneCompound(canvas, controlsEl, onSpeak) {
 // ============================================================
 // SCENE 3: 神奇數位馬戲團 — 1 顆球 vs ETF 安全網大禮包
 // ============================================================
-function mountCircusETF(canvas, controlsEl, onSpeak) {
+function mountCircusETF(canvas, controlsEl, onReact) {
   const { ctx, getSize, cleanup } = setupCanvas(canvas);
   const particles = [];
   let mode = 'single'; // 'single' | 'etf'
@@ -709,10 +709,10 @@ function mountCircusETF(canvas, controlsEl, onSpeak) {
     crashed = false;
     poppedIndex = -1;
     AudioEngine.sfx.boing();
-    onSpeak(
+    onReact(
       m === 'single'
-        ? '模式 A，只買一家公司！波波只頂著一顆玻璃球，沒有安全網喔！'
-        : '模式 B，E T F 大禮包！一次擁有好多產業的好公司，底下還有超強安全網！'
+        ? { avatar: '🥚 冒險波波', line: '「模式 A：全押 1 顆玻璃球，沒有安全網喔！」', tone: 'gold' }
+        : { avatar: '🎪 聰明波波', line: '「模式 B：ETF 一次買 500 家＋青藍色安全網！」', tone: 'cyan' }
     );
   }
 
@@ -726,13 +726,13 @@ function mountCircusETF(canvas, controlsEl, onSpeak) {
     if (mode === 'single') {
       AudioEngine.sfx.explosion();
       spawnBurst(particles, W * 0.5, H * 0.38, 65, ['#ff4757', '#ffb800', '#ffffff'], 8, 6);
-      onSpeak('碰！全押的那家公司倒閉了！玻璃球碎光光，錢直接歸零！');
+      onReact({ avatar: '💀 慘劇發生', line: '「碰！全押的公司倒閉，玻璃球碎光直接歸零！」', tone: 'crimson' });
     } else {
       AudioEngine.sfx.laser();
       AudioEngine.sfx.shield();
       poppedIndex = Math.floor(Math.random() * etfIcons.length);
       spawnBurst(particles, W * 0.5, H * 0.35, 30, ['#ff7a2f', '#00d4ff', '#22e584'], 6, 4);
-      onSpeak('安全過關！只有一顆球破掉，其他十一家好公司穩穩彈在安全網上，錢幾乎沒事！');
+      onReact({ avatar: '🛡️ 安全過關', line: '「只有 1 顆破掉，其他 11 顆穩穩彈在安全網上！」', tone: 'emerald' });
     }
   };
 
@@ -928,7 +928,7 @@ function mountCircusETF(canvas, controlsEl, onSpeak) {
 // ============================================================
 // SCENE 4: 災難電影特效 — 股災流星雨＋火山＋海嘯
 // ============================================================
-function mountDisasterCrash(canvas, controlsEl, onSpeak) {
+function mountDisasterCrash(canvas, controlsEl, onReact) {
   const { ctx, getSize, cleanup } = setupCanvas(canvas);
   const particles = [];
   const meteors = [];
@@ -953,7 +953,7 @@ function mountDisasterCrash(canvas, controlsEl, onSpeak) {
           state = 'flying';
           progress = 0;
           AudioEngine.sfx.rocket();
-          onSpeak('電影開拍！飛船穩穩往上飛，小心前方隨時會有大股災！');
+          onReact({ avatar: '🚀 飛船啟航', line: '「電影開拍！飛船穩穩起飛，注意前方股災警報！」', tone: 'gold' });
           renderControls();
         };
       }
@@ -968,7 +968,7 @@ function mountDisasterCrash(canvas, controlsEl, onSpeak) {
         AudioEngine.sfx.wrong();
         AudioEngine.sfx.explosion();
         triggerShake(canvas.parentElement);
-        onSpeak('哎呀！在最低點嚇跑賣掉，真的賠掉四千二！你看後面大盤漲回去，但你已經下車了！');
+        onReact({ avatar: '😱 恐慌下車', line: '「最低點賣掉真的虧 -$4,200！後面暴漲全錯過！」', tone: 'crimson' });
         renderControls();
       };
       controlsEl.querySelector('#s4-hold').onclick = () => {
@@ -977,7 +977,7 @@ function mountDisasterCrash(canvas, controlsEl, onSpeak) {
         AudioEngine.sfx.fanfare();
         const { W, H } = getSize();
         spawnBurst(particles, W * 0.45, H * 0.55, 55, ['#00d4ff', '#ffb800', '#22e584', '#ffffff'], 7, 5);
-        onSpeak('超帥！開啟六角防護罩擋住隕石！熬過暴風雨，股市衝破天際創新高，大賺兩萬六千五百元！');
+        onReact({ avatar: '🛡️ 鋼鐵護盾', line: '「擋住隕石！熬過風暴直接創新高，大賺 $26,500！」', tone: 'emerald' });
         renderControls();
       };
     } else {
@@ -1066,7 +1066,7 @@ function mountDisasterCrash(canvas, controlsEl, onSpeak) {
         AudioEngine.sfx.explosion();
         triggerShake(canvas.parentElement);
         spawnBurst(particles, W * 0.44, H * 0.62, 48, ['#ff4757', '#ff7a2f', '#ffb800'], 7, 5);
-        onSpeak('紅色警報！隕石股災來了，暴跌百分之四十！易軒你現在要賣掉，還是開護盾抱緊？');
+        onReact({ avatar: '🚨 紅色警報', line: '「隕石股災暴跌 -40%！快選：嚇跑賣掉 還是 開護盾抱緊？」', tone: 'crimson' });
         renderControls();
       }
     } else if (state === 'panic_sold' || state === 'shield_win') {
@@ -1214,7 +1214,7 @@ function mountDisasterCrash(canvas, controlsEl, onSpeak) {
 // ============================================================
 // SCENE 5: 桌面大戰 II — 點擊砍爆紅旗詐騙彈窗！(可玩小遊戲)
 // ============================================================
-function mountDesktopScam(canvas, controlsEl, onSpeak) {
+function mountDesktopScam(canvas, controlsEl, onReact) {
   const { ctx, getSize, cleanup } = setupCanvas(canvas);
   const particles = [];
   const slashes = [];
@@ -1305,17 +1305,18 @@ function mountDesktopScam(canvas, controlsEl, onSpeak) {
             toastText = '🏆 詐騙大魔王全滅！防詐滿分！';
             toastColor = '#22e584';
             AudioEngine.sfx.fanfare();
-            onSpeak('太神啦！所有保證穩賺不賠的詐騙視窗全被你砍爆了！');
+            onReact({ avatar: '🏆 防詐英雄', line: '「太神啦！所有保證暴富的詐騙窗全被砍爆了！」', tone: 'emerald' });
           } else {
             toastText = `⚔️ 漂亮砍爆詐騙！(${score}/${targetScore})`;
             toastColor = '#ffb800';
+            onReact({ avatar: '⚔️ 阿火斬擊', line: `「漂亮砍爆詐騙窗！連擊進度 ${score}/${targetScore}！」`, tone: 'gold' });
             if (popups.filter(x => x.isScam).length < 2) spawnPopup();
           }
         } else {
           AudioEngine.sfx.shield();
           toastText = '🛡️ 這是正確好觀念，別砍它喔！';
           toastColor = '#00d4ff';
-          onSpeak('哎呀，綠色的是正確投資好觀念，不要砍它喔！');
+          onReact({ avatar: '🛡️ 護盾提醒', line: '「綠色的是正確好觀念，要留著別砍它喔！」', tone: 'cyan' });
         }
         return;
       }
@@ -1421,7 +1422,7 @@ function mountDesktopScam(canvas, controlsEl, onSpeak) {
 // ============================================================
 // SCENE 6: 16歲起飛基地 — 零用錢電池分配＋火箭發射！
 // ============================================================
-function mountLaunchPrep(canvas, controlsEl, onSpeak) {
+function mountLaunchPrep(canvas, controlsEl, onReact) {
   const { ctx, getSize, cleanup } = setupCanvas(canvas);
   const particles = [];
   // 10 energy batteries ($300 each = $3,000/month)
@@ -1517,7 +1518,7 @@ function mountLaunchPrep(canvas, controlsEl, onSpeak) {
         triggerShake(canvas.parentElement);
         const { W, H } = getSize();
         spawnBurst(particles, W * 0.5, H * 0.72, 70, ['#ffb800', '#ff7a2f', '#00d4ff', '#ffffff'], 8, 6);
-        onSpeak('三、二、一，發射！留好護盾、用閒錢投資，十六歲記得和爸媽一起討論開戶喔！');
+        onReact({ avatar: '🚀 16歲起飛', line: '「3、2、1 發射！留好護盾、用閒錢投資，記得找爸媽一起開戶 👨‍👩‍👦！」', tone: 'emerald' });
         renderControls();
       };
     }
@@ -1664,29 +1665,32 @@ export function mountDisasterSandbox(canvas, uiHooks) {
   const events = [
     {
       atYear: 3,
+      avatar: '☄️ 股災警報',
       title: '☄️ 第 3 年：隕石股災爆發！大盤瞬間大跌 -35%！',
-      voice: '第三年，隕石股災爆發，市場暴跌百分之三十五！易軒你要怎麼辦？',
+      bubble: '「全場暴跌 -35%！易軒你要嚇跑賣掉，還是開護盾抱緊？」',
       choices: [
-        { label: '😱 嚇死了全部賣掉', good: false, effect: () => { etf *= 0.65; risky *= 0.45; cash += etf + risky; etf = 0; risky = 0; } },
-        { label: '🛡️ 開護盾抱緊＋繼續存', good: true, effect: () => { goodDecisions++; etf *= 0.82; etf += 1500; } }
+        { label: '😱 嚇死了全部賣掉', good: false, react: '「慘！最低點全賣掉，後面暴漲都沒賺到！」', effect: () => { etf *= 0.65; risky *= 0.45; cash += etf + risky; etf = 0; risky = 0; } },
+        { label: '🛡️ 開護盾抱緊＋繼續存', good: true, react: '「神操作！開護盾抱緊還趁打折加碼！」', effect: () => { goodDecisions++; etf *= 0.82; etf += 1500; } }
       ]
     },
     {
       atYear: 6,
+      avatar: '🚨 詐騙入侵',
       title: '🚨 第 6 年：假投資老師傳訊「保證三天賺五倍！」',
-      voice: '第六年，陌生老師傳訊息說保證三天賺五倍，叫你把錢匯給他！',
+      bubble: '「陌生老師說穩賺不賠、叫你立刻匯款！」',
       choices: [
-        { label: '⚔️ 雷射劍砍爆＋直接封鎖', good: true, effect: () => { goodDecisions++; } },
-        { label: '💸 相信他匯一半的錢', good: false, effect: () => { cash *= 0.5; etf *= 0.5; risky *= 0.5; } }
+        { label: '⚔️ 雷射劍砍爆＋直接封鎖', good: true, react: '「一刀斬斷詐騙！守住全部資產！」', effect: () => { goodDecisions++; } },
+        { label: '💸 相信他匯一半的錢', good: false, react: '「糟糕！錢一匯出去老師直接人間蒸發！」', effect: () => { cash *= 0.5; etf *= 0.5; risky *= 0.5; } }
       ]
     },
     {
       atYear: 8,
+      avatar: '🌋 火山爆發',
       title: '🌋 第 8 年：超級火山通膨＋單一飆股公司大爆炸！',
-      voice: '第八年，物價通膨爆發，而且一家熱門飆股公司突然倒閉了！',
+      bubble: '「一家熱門飆股突然倒閉！分散 ETF 穩穩發光！」',
       choices: [
-        { label: '🎪 相信分散 ETF 穩穩往前飛', good: true, effect: () => { goodDecisions++; risky *= 0.35; etf *= 1.18; } },
-        { label: '🎲 把錢全押另一家神秘飆股', good: false, effect: () => { risky = (risky + etf * 0.7) * 0.55; etf *= 0.3; } }
+        { label: '🎪 相信分散 ETF 穩穩往前飛', good: true, react: '「ETF 500 家安全網撐住！衝破天際！」', effect: () => { goodDecisions++; risky *= 0.35; etf *= 1.18; } },
+        { label: '🎲 把錢全押另一家神秘飆股', good: false, react: '「又賭單一公司，碰到大跌重傷！」', effect: () => { risky = (risky + etf * 0.7) * 0.55; etf *= 0.3; } }
       ]
     }
   ];
@@ -1719,7 +1723,7 @@ export function mountDisasterSandbox(canvas, uiHooks) {
       spawnBurst(particles, W * 0.5, H * 0.5, 45, ['#ff4757', '#ff7a2f'], 7, 5);
     }
     pausedEvent = null;
-    uiHooks.onEventClear();
+    uiHooks.onEventClear(choice);
   }
 
   let stepAcc = 0;
@@ -1858,20 +1862,20 @@ export function mountDisasterSandbox(canvas, uiHooks) {
 }
 
 // Unified scene registry
-export function mountScene(sceneType, canvas, controlsEl, onSpeak) {
+export function mountScene(sceneType, canvas, controlsEl, onReact) {
   switch (sceneType) {
     case 'desktop_inflation':
-      return mountDesktopInflation(canvas, controlsEl, onSpeak);
+      return mountDesktopInflation(canvas, controlsEl, onReact);
     case 'drone_compound':
-      return mountDroneCompound(canvas, controlsEl, onSpeak);
+      return mountDroneCompound(canvas, controlsEl, onReact);
     case 'circus_etf':
-      return mountCircusETF(canvas, controlsEl, onSpeak);
+      return mountCircusETF(canvas, controlsEl, onReact);
     case 'disaster_crash':
-      return mountDisasterCrash(canvas, controlsEl, onSpeak);
+      return mountDisasterCrash(canvas, controlsEl, onReact);
     case 'desktop_scam':
-      return mountDesktopScam(canvas, controlsEl, onSpeak);
+      return mountDesktopScam(canvas, controlsEl, onReact);
     case 'launch_prep':
-      return mountLaunchPrep(canvas, controlsEl, onSpeak);
+      return mountLaunchPrep(canvas, controlsEl, onReact);
     default:
       return () => {};
   }

@@ -1,8 +1,8 @@
 /* ============================================================
-   app.js — 易軒的投資片場主控制器
+   app.js — 易軒的投資片場主控制器（漫畫情境跑馬燈版，無語音朗讀）
    ============================================================ */
 
-import { CHAPTERS } from './data.js';
+import { CHAPTERS, HOME_COMIC_SCENARIOS } from './data.js';
 import { AudioEngine } from './audio.js';
 import { mountScene, mountDisasterSandbox } from './scenes.js';
 
@@ -37,6 +37,95 @@ function saveProgress() {
       JSON.stringify({ completed: state.completed, coins: state.coins })
     );
   } catch (_) {}
+}
+
+// ---- Reusable Comic Scenario Marquee Builder ----
+function renderComicMarquee(containerEl, panels, options = {}) {
+  if (!containerEl) return;
+  const {
+    title = '💬 漫畫情境跑馬燈（移上去或點卡片會暫停）',
+    compact = false,
+    durationSec = 42,
+    onPanelClick = null
+  } = options;
+
+  const panelMarkup = panels
+    .map(
+      (p, idx) => `
+      <article class="comic-panel" data-panel-idx="${idx}" tabindex="0">
+        <div class="comic-panel-top">
+          <span class="comic-step-tag">${p.step || p.tag}</span>
+          <span class="comic-avatar-pill">${p.avatar}</span>
+        </div>
+        <div class="comic-scene-box">${p.scene}</div>
+        <div class="comic-speech-bubble">${p.bubble}</div>
+        <span class="comic-outcome-pill tone-${p.tone || 'gold'}">${p.outcome}</span>
+      </article>
+    `
+    )
+    .join('');
+
+  // Duplicate panels for seamless infinite horizontal marquee loop
+  containerEl.innerHTML = `
+    <div class="comic-marquee-shell ${compact ? 'compact' : ''}" style="--marquee-dur:${durationSec}s;--marquee-dur-slow:${Math.round(durationSec * 1.75)}s;">
+      <div class="comic-marquee-header">
+        <span class="comic-marquee-title">${title}</span>
+        <div class="comic-marquee-controls">
+          <button type="button" class="marquee-ctrl-btn" data-action="pause">⏸️ 暫停看</button>
+          <button type="button" class="marquee-ctrl-btn" data-action="slow">🐢 慢速看</button>
+        </div>
+      </div>
+      <div class="comic-marquee-viewport">
+        <div class="comic-marquee-track">
+          ${panelMarkup}
+          ${panelMarkup}
+        </div>
+      </div>
+    </div>
+  `;
+
+  const shell = containerEl.querySelector('.comic-marquee-shell');
+  const pauseBtn = containerEl.querySelector('[data-action="pause"]');
+  const slowBtn = containerEl.querySelector('[data-action="slow"]');
+
+  pauseBtn.onclick = () => {
+    const paused = shell.classList.toggle('paused');
+    pauseBtn.classList.toggle('active', paused);
+    pauseBtn.textContent = paused ? '▶️ 繼續跑' : '⏸️ 暫停看';
+    AudioEngine.sfx.click();
+  };
+
+  slowBtn.onclick = () => {
+    const slow = shell.classList.toggle('slow');
+    slowBtn.classList.toggle('active', slow);
+    slowBtn.textContent = slow ? '🐇 回正常速度' : '🐢 慢速看';
+    AudioEngine.sfx.click();
+  };
+
+  containerEl.querySelectorAll('.comic-panel').forEach(el => {
+    el.onclick = () => {
+      AudioEngine.sfx.click();
+      const idx = Number(el.dataset.panelIdx);
+      const panel = panels[idx];
+      if (onPanelClick && panel) {
+        onPanelClick(panel);
+      }
+    };
+  });
+}
+
+// ---- Live Comic Reaction Banner Helper ----
+function setComicReaction(bannerId, avatarId, bubbleId, react) {
+  const banner = document.getElementById(bannerId);
+  const av = document.getElementById(avatarId);
+  const bb = document.getElementById(bubbleId);
+  if (!banner || !av || !bb || !react) return;
+
+  banner.className = `comic-live-banner tone-${react.tone || 'gold'}`;
+  av.textContent = react.avatar || '🎬 提示';
+  bb.textContent = react.line || '';
+  void banner.offsetWidth;
+  banner.classList.add('pop');
 }
 
 // ---- Confetti Fireworks Celebration ----
@@ -95,7 +184,6 @@ function cleanupActiveViews() {
     state.sandboxController.destroy();
     state.sandboxController = null;
   }
-  AudioEngine.stopSpeak();
 }
 
 function showView(id) {
@@ -122,7 +210,6 @@ function updateHeaderStats() {
     }).join('');
   }
 
-  // Update Hero CTA text
   const nextCh = CHAPTERS.find(c => !state.completed.includes(c.id)) || CHAPTERS[0];
   const heroStart = document.getElementById('btn-hero-start');
   if (heroStart) {
@@ -153,8 +240,8 @@ function renderHomeGrid() {
           <h3 class="chapter-title">${ch.badgeIcon} ${ch.title}</h3>
           <p class="chapter-hook">${ch.hook}</p>
           <div class="chapter-footer">
-            <span class="chapter-play-pill">${done ? '🔄 再玩一次動畫' : '▶️ 看動畫玩實驗'}</span>
-            <span style="font-size:1.2rem;">🔊</span>
+            <span class="chapter-play-pill">${done ? '🔄 再玩一次漫畫動畫' : '▶️ 看漫畫玩實驗'}</span>
+            <span style="font-size:1.2rem;">💬</span>
           </div>
         </div>
       </button>
@@ -176,7 +263,7 @@ function goHome() {
   showView('view-home');
 }
 
-// ---- Stage View (Play -> Quiz -> Medal) ----
+// ---- Stage View (Comic+Play -> Quiz -> Medal) ----
 function openChapter(chapterId) {
   cleanupActiveViews();
   state.currentChapterId = chapterId;
@@ -196,7 +283,6 @@ function renderStage() {
   document.getElementById('stage-world-badge').textContent = ch.worldBadge;
   document.getElementById('stage-title').textContent = `第 ${ch.num} 關：${ch.title}`;
 
-  // Step tabs state
   const tabPlay = document.getElementById('tab-play');
   const tabQuiz = document.getElementById('tab-quiz');
   const tabMedal = document.getElementById('tab-medal');
@@ -215,19 +301,34 @@ function renderStage() {
   }
 
   if (state.stageStep === 'play') {
-    document.getElementById('play-prompt-text').textContent = ch.shortPrompt;
+    // 1. Mount Chapter-specific 4-panel Comic Scenario Marquee!
+    renderComicMarquee(
+      document.getElementById('stage-comic-marquee'),
+      ch.comics,
+      {
+        title: `💬 第 ${ch.num} 關漫畫情境跑馬燈（4 格連環秒懂）`,
+        compact: true,
+        durationSec: 26,
+        onPanelClick: panel => {
+          setComicReaction('stage-comic-reaction', 'stage-react-avatar', 'stage-react-bubble', {
+            avatar: panel.avatar,
+            line: `${panel.scene} ➔ ${panel.bubble}`,
+            tone: panel.tone
+          });
+        }
+      }
+    );
+
+    // 2. Initialize Live Comic Reaction Strip
+    setComicReaction('stage-comic-reaction', 'stage-react-avatar', 'stage-react-bubble', ch.defaultReaction);
     document.getElementById('play-takeaway-text').textContent = ch.takeaway;
 
-    document.getElementById('btn-speak-intro').onclick = () => AudioEngine.speak(ch.voiceIntro, true);
-    document.getElementById('btn-speak-takeaway').onclick = () => AudioEngine.speak(ch.takeawayVoice, true);
-
+    // 3. Mount Interactive 60fps Canvas Scene
     const canvas = document.getElementById('stage-canvas');
     const controlsEl = document.getElementById('stage-controls');
-    state.destroyScene = mountScene(ch.sceneType, canvas, controlsEl, msg => {
-      AudioEngine.speak(msg, false);
+    state.destroyScene = mountScene(ch.sceneType, canvas, controlsEl, react => {
+      setComicReaction('stage-comic-reaction', 'stage-react-avatar', 'stage-react-bubble', react);
     });
-
-    AudioEngine.speak(ch.voiceIntro, false);
   } else if (state.stageStep === 'quiz') {
     renderQuizQuestion();
   } else if (state.stageStep === 'medal') {
@@ -240,7 +341,6 @@ function renderQuizQuestion() {
   const q = ch.quiz[state.quizIdx];
   state.quizLocked = false;
 
-  // Progress dots
   const dotsEl = document.getElementById('quiz-dots');
   dotsEl.innerHTML = ch.quiz
     .map((_, idx) => {
@@ -251,7 +351,6 @@ function renderQuizQuestion() {
 
   document.getElementById('quiz-icon').textContent = q.icon;
   document.getElementById('quiz-question').textContent = `(${state.quizIdx + 1}/3) ${q.question}`;
-  document.getElementById('btn-speak-quiz').onclick = () => AudioEngine.speak(q.voice, true);
 
   const feedbackEl = document.getElementById('quiz-feedback');
   feedbackEl.classList.add('hidden');
@@ -289,7 +388,6 @@ function renderQuizQuestion() {
           </button>
         `;
         feedbackEl.classList.remove('hidden');
-        AudioEngine.speak(q.goodMsg, false);
 
         feedbackEl.querySelector('#btn-quiz-next').onclick = () => {
           AudioEngine.sfx.click();
@@ -315,13 +413,10 @@ function renderQuizQuestion() {
           <div class="quiz-feedback-msg">💡 ${q.badMsg}</div>
         `;
         feedbackEl.classList.remove('hidden');
-        AudioEngine.speak(q.badMsg, false);
         setTimeout(() => btn.classList.remove('wrong'), 700);
       }
     };
   });
-
-  AudioEngine.speak(q.voice, false);
 }
 
 function renderMedalPane() {
@@ -332,8 +427,6 @@ function renderMedalPane() {
   document.getElementById('medal-icon').textContent = ch.badgeIcon;
   document.getElementById('medal-name').textContent = `獲得【${ch.badgeName}】！`;
   document.getElementById('medal-slogan').textContent = ch.takeaway;
-
-  AudioEngine.speak(`恭喜易軒通關！獲得${ch.badgeName}！${ch.takeawayVoice}`, false);
 
   const nextIdx = CHAPTERS.findIndex(c => c.id === ch.id) + 1;
   const nextBtn = document.getElementById('btn-medal-next');
@@ -352,6 +445,12 @@ function openSandbox() {
   cleanupActiveViews();
   showView('view-sandbox');
 
+  setComicReaction('sandbox-comic-reaction', 'sandbox-react-avatar', 'sandbox-react-bubble', {
+    avatar: '🎬 導演',
+    line: '「拉好下面 3 個比例，按開拍挑戰 10 年災難大片！」',
+    tone: 'gold'
+  });
+
   const alloc = { cash: 30, etf: 60, risky: 10 };
   const sCash = document.getElementById('sb-cash');
   const sEtf = document.getElementById('sb-etf');
@@ -366,7 +465,6 @@ function openSandbox() {
     sRisky.value = alloc.risky;
   }
 
-  // Keep total strictly 100% automatically so Yi-Xuan never struggles with arithmetic!
   function adjustAlloc(changedKey, newVal) {
     newVal = Math.max(0, Math.min(100, Number(newVal)));
     alloc[changedKey] = newVal;
@@ -396,6 +494,11 @@ function openSandbox() {
   const canvas = document.getElementById('sandbox-canvas');
   state.sandboxController = mountDisasterSandbox(canvas, {
     onEvent(ev, chooseCb) {
+      setComicReaction('sandbox-comic-reaction', 'sandbox-react-avatar', 'sandbox-react-bubble', {
+        avatar: ev.avatar || '🚨 突發事件',
+        line: ev.bubble || ev.title,
+        tone: 'crimson'
+      });
       eventBox.innerHTML = `
         <div class="event-modal-title">${ev.title}</div>
         <div class="event-choice-row">
@@ -411,19 +514,31 @@ function openSandbox() {
         </div>
       `;
       eventBox.classList.remove('hidden');
-      AudioEngine.speak(ev.voice, false);
       eventBox.querySelectorAll('button').forEach(btn => {
         btn.onclick = () => chooseCb(ev.choices[Number(btn.dataset.c)]);
       });
     },
-    onEventClear() {
+    onEventClear(choice) {
       eventBox.classList.add('hidden');
+      if (choice && choice.react) {
+        setComicReaction('sandbox-comic-reaction', 'sandbox-react-avatar', 'sandbox-react-bubble', {
+          avatar: choice.good ? '🛡️ 漂亮應對' : '💥 慘痛教訓',
+          line: choice.react,
+          tone: choice.good ? 'emerald' : 'crimson'
+        });
+      }
     },
     onFinish(res) {
       fireConfetti();
       state.coins += res.rank === 'S' ? 100 : 50;
       saveProgress();
       updateHeaderStats();
+
+      setComicReaction('sandbox-comic-reaction', 'sandbox-react-avatar', 'sandbox-react-bubble', {
+        avatar: `🏆 ${res.rank} 級票房`,
+        line: `「10 年殺青！26 歲總資產 $${res.finalTotal.toLocaleString()} — ${res.comment}」`,
+        tone: res.rank === 'C' ? 'crimson' : 'emerald'
+      });
 
       const profit = res.finalTotal - res.invested;
       resultBox.innerHTML = `
@@ -448,22 +563,19 @@ function openSandbox() {
         </p>
       `;
       resultBox.classList.remove('hidden');
-      AudioEngine.speak(`十年電影殺青！你拿到 ${res.rank} 級評價！二十六歲總資產是 ${res.finalTotal} 元！${res.comment}`, false);
     }
   });
 
   document.getElementById('btn-sandbox-run').onclick = () => {
     eventBox.classList.add('hidden');
     resultBox.classList.add('hidden');
+    setComicReaction('sandbox-comic-reaction', 'sandbox-react-avatar', 'sandbox-react-bubble', {
+      avatar: '🚀 10年開拍',
+      line: '「電影開拍！隨時注意第 3、6、8 年的災難與詐騙考驗！」',
+      tone: 'cyan'
+    });
     state.sandboxController.start({ ...alloc });
-    AudioEngine.speak('十年投資電影開拍！隨時準備應對災難突發事件！', false);
   };
-
-  document.getElementById('btn-speak-sandbox').onclick = () => {
-    AudioEngine.speak('這裡是終極十年電影模擬片場！先調好你的現金護盾、E T F 大禮包和單一飆股比例，再按開拍十年電影，挑戰三大災難事件！', true);
-  };
-
-  AudioEngine.speak('歡迎來到終極十年電影模擬片場！拉動下方比例，按下開拍十年電影，看看二十六歲的你能賺多少！', false);
 }
 
 // ---- Boot & Event Wiring ----
@@ -472,35 +584,29 @@ function init() {
   renderHomeGrid();
   updateHeaderStats();
 
-  // Topbar Buttons
+  // Mount Home 10-scenario Comic Marquee!
+  renderComicMarquee(
+    document.getElementById('home-comic-marquee'),
+    HOME_COMIC_SCENARIOS,
+    {
+      title: '💬 投資漫畫情境跑馬燈（看圖秒懂 10 種日常投資情境！）',
+      compact: false,
+      durationSec: 46
+    }
+  );
+
+  // Topbar & Hero Buttons
   document.getElementById('btn-home-logo').onclick = goHome;
   document.getElementById('btn-back-home').onclick = goHome;
   document.getElementById('btn-sandbox-back').onclick = goHome;
   document.getElementById('btn-open-sandbox-top').onclick = openSandbox;
   document.getElementById('btn-open-sandbox-banner').onclick = openSandbox;
-
-  document.getElementById('btn-hero-speak').onclick = () => {
-    AudioEngine.speak(
-      '哈囉易軒！歡迎來到你的專屬投資片場！這裡幾乎不用看字，用看動畫、玩特效和語音，就能從零學會最正確的投資觀念！快點第一關開始冒險吧！',
-      true
-    );
+  document.getElementById('btn-hero-comics').onclick = () => {
+    AudioEngine.sfx.click();
+    document.getElementById('home-comic-marquee').scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
-  // Voice Auto Toggle
-  const voiceBtn = document.getElementById('btn-toggle-voice');
-  const syncVoiceBtn = () => {
-    const on = AudioEngine.getVoiceAuto();
-    voiceBtn.classList.toggle('active', on);
-    voiceBtn.textContent = on ? '🔊 語音朗讀：開' : '🔇 語音朗讀：關';
-  };
-  voiceBtn.onclick = () => {
-    AudioEngine.setVoiceAuto(!AudioEngine.getVoiceAuto());
-    syncVoiceBtn();
-    if (AudioEngine.getVoiceAuto()) AudioEngine.speak('語音朗讀已開啟！', true);
-  };
-  syncVoiceBtn();
-
-  // SFX Toggle
+  // SFX Toggle (Movie VFX only, no voice narration)
   const sfxBtn = document.getElementById('btn-toggle-sfx');
   const syncSfxBtn = () => {
     const on = AudioEngine.getSfx();
