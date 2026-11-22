@@ -1,6 +1,6 @@
 /* ============================================================
    comicEngine.js — Alan Becker 火柴人 × Undertale 60fps 動態漫畫引擎
-   主角：🟢 小綠 (#22e584) 代表易軒
+   主角：🟢 小綠 (#22e584)
    ============================================================ */
 
 const COLORS = {
@@ -426,7 +426,7 @@ export function createComicStage(canvas) {
         ctx.fillRect(0, H - 32, W, 32);
         ctx.fillStyle = '#22e584';
         ctx.fillRect(14, H - 24, 18, 16);
-        drawBanner('🟢 主角登場：小綠（16歲的易軒）', '#22e584');
+        drawBanner('🟢 主角登場：16 歲的小綠', '#22e584');
         drawStick(ctx, W * 0.5, H - 68, sc * 1.1, COLORS.green, t, 'wave');
         ctx.fillStyle = '#ffffff';
         ctx.font = '900 18px "Noto Sans TC", sans-serif';
@@ -971,7 +971,7 @@ export function createComicStage(canvas) {
       }
 
       case 'safe_four_rules': {
-        drawBanner('💚 16 歲易軒的 4 大黃金防破產守則', '#22e584');
+        drawBanner('💚 16 歲小綠的 4 大黃金防破產守則', '#22e584');
         const rules = [
           { ic: '🚫', t1: '① 絕不借錢', t2: '絕不開槓桿', c: '#ff4757' },
           { ic: '🛡️', t1: '② 緊急備用金', t2: '留好救命 HP', c: '#38bdf8' },
@@ -1874,7 +1874,7 @@ export function createComicStage(canvas) {
       case 'grand_ending':
       case 'true_ending': {
         drawGround(0.84, '#ffd43b');
-        drawBanner('👑 GRAND TRUE ENDING：易軒完成【初・中・高階】全部 100 幕！', '#ffd43b');
+        drawBanner('👑 GRAND TRUE ENDING：小綠完成【初・中・高階】全部 100 幕！', '#ffd43b');
         if (Math.random() < 0.08) {
           burst(W * (0.12 + Math.random() * 0.76), H * (0.18 + Math.random() * 0.32), 26, ['#22e584', '#ffd43b', '#38bdf8', '#ffffff'], 5.5, 4);
         }

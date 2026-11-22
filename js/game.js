@@ -285,7 +285,7 @@ function handleChoice(option) {
   if (option.correct) {
     mode = 'choice_won';
     SFX.shield();
-    document.getElementById('speaker-name').textContent = '小綠（易軒）— 正確決定！';
+    document.getElementById('speaker-name').textContent = '小綠 — 正確決定！';
     document.getElementById('speaker-name').style.color = '#22e584';
     drawPortrait(document.getElementById('portrait-canvas'), 'green', 'happy');
     startTypewriter(option.winText, 'green');
