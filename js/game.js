@@ -260,9 +260,9 @@ function renderScene() {
     if (sc.isEnding) {
       btnNext.textContent = '↺ 回到標題畫面';
     } else if (sc.tierClear === 'beginner') {
-      btnNext.textContent = '⚡ 進入中階篇 ▶';
+      btnNext.textContent = '⚡ 進入中級篇 ▶';
     } else if (sc.tierClear === 'intermediate') {
-      btnNext.textContent = '🏆 進入高階篇 ▶';
+      btnNext.textContent = '🏆 進入高級篇 ▶';
     } else {
       btnNext.textContent = '下一頁 ▶';
     }

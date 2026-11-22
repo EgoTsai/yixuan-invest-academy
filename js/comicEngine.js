@@ -1022,7 +1022,7 @@ export function createComicStage(canvas) {
         const accent = isT1 ? '#22e584' : '#38bdf8';
         drawGround(0.84, accent);
         drawBanner(
-          isT1 ? '🌱 初階通關！(33/100) ➔ 解鎖 ⚡ 中階實戰篇！' : '⚡ 中階通關！(66/100) ➔ 解鎖 🏆 高階大師篇！',
+          isT1 ? '🌱 初級通關！(33/100) ➔ 解鎖 ⚡ 中級：投資的方法！' : '⚡ 中級通關！(66/100) ➔ 解鎖 🏆 高級：長期規劃與心理建設！',
           accent
         );
         if (Math.random() < 0.05) {
@@ -1870,11 +1870,252 @@ export function createComicStage(canvas) {
         break;
       }
 
+      // ================================================================
+      // 🆕 新增初級/中級/高級專屬漫畫場景
+      // ================================================================
+      case 'beg_age_start': {
+        drawGround();
+        drawBanner('🎂 幾歲可以開始投資？未滿 18 歲爸媽陪同開戶・現在就能學觀念！', '#22e584');
+        const boxes = [
+          { t1: '16 歲現在', t2: '學觀念＋找爸媽陪同', c: '#22e584' },
+          { t1: '18 歲以後', t2: '獨立開證券戶出發！', c: '#38bdf8' }
+        ];
+        boxes.forEach((b, i) => {
+          const x = W * (0.14 + i * 0.42);
+          ctx.fillStyle = '#0e1b2e';
+          ctx.strokeStyle = b.c;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.roundRect(x, H * 0.24, W * 0.3, 92, 12);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = b.c;
+          ctx.font = '900 20px "Noto Sans TC", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(b.t1, x + W * 0.15, H * 0.33);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '800 15px "Noto Sans TC", sans-serif';
+          ctx.fillText(b.t2, x + W * 0.15, H * 0.42);
+        });
+        drawStick(ctx, W * 0.42, gy - 34, sc, COLORS.green, t, 'wave');
+        drawStick(ctx, W * 0.58, gy - 34, sc, COLORS.blue, t, 'wave');
+        break;
+      }
+
+      case 'beg_terms_principal': {
+        drawGround();
+        drawBanner('📘 基礎名詞：本金 $100 ＋ 報酬率 (+10%) ＝ $110', '#ffd43b');
+        const cols = [
+          { lbl: '本金 $100', c: '#38bdf8', x: 0.2 },
+          { lbl: '＋ 賺 $10 (+10%)', c: '#22e584', x: 0.5 },
+          { lbl: '＝ $110', c: '#ffd43b', x: 0.8 }
+        ];
+        cols.forEach(col => {
+          ctx.fillStyle = '#111a2e';
+          ctx.strokeStyle = col.c;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.roundRect(W * col.x - 86, H * 0.3, 172, 74, 12);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = col.c;
+          ctx.font = '900 18px "Noto Sans TC", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(col.lbl, W * col.x, H * 0.39);
+        });
+        drawStick(ctx, W * 0.5, gy - 34, sc * 0.9, COLORS.yellow, t, 'point');
+        break;
+      }
+
+      case 'mid_method_map': {
+        drawBanner('🗺️ 中級武器庫：6 大常見投資方法（從安全到高風險）', '#38bdf8');
+        const tools = [
+          { ic: '🏦', t: '① 定存', c: '#94a3b8' },
+          { ic: '📜', t: '② 債券', c: '#38bdf8' },
+          { ic: '📈', t: '③ 股票', c: '#ffd43b' },
+          { ic: '🧺', t: '④ ETF', c: '#22e584' },
+          { ic: '🏠', t: '⑤ 房產借貸', c: '#ff7a2f' },
+          { ic: '⚡', t: '⑥ 期貨/FX', c: '#ff4757' }
+        ];
+        const cw = Math.min(115, (W - 76) / 6);
+        const sx = (W - (cw * 6 + 40)) / 2;
+        tools.forEach((tl, i) => {
+          const x = sx + i * (cw + 8);
+          ctx.fillStyle = '#0e172a';
+          ctx.strokeStyle = tl.c;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.roundRect(x, H * 0.28, cw, H * 0.46, 12);
+          ctx.fill();
+          ctx.stroke();
+          ctx.font = '32px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(tl.ic, x + cw / 2, H * 0.46);
+          ctx.fillStyle = tl.c;
+          ctx.font = '900 13px "Noto Sans TC", sans-serif';
+          ctx.fillText(tl.t, x + cw / 2, H * 0.64);
+        });
+        break;
+      }
+
+      case 'mid_deposit_cash': {
+        drawGround();
+        drawBanner('🏦 方法 ① 銀行定存：最安全護盾（放備用金），但跑輸通膨', '#38bdf8');
+        ctx.fillStyle = '#102138';
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.roundRect(W * 0.34, H * 0.25, W * 0.32, 110, 14);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '900 22px "Noto Sans TC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🏦 銀行定存 ~1.5%', W * 0.5, H * 0.37);
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '800 15px "Noto Sans TC", sans-serif';
+        ctx.fillText('🛡️ 幾乎不虧，適合放急用錢', W * 0.5, H * 0.47);
+        drawStick(ctx, W * 0.24, gy - 34, sc * 0.9, COLORS.blue, t, 'wave');
+        break;
+      }
+
+      case 'mid_bond_intro':
+      case 'mid_bond_risk': {
+        drawGround();
+        drawBanner(
+          currentScene === 'mid_bond_risk'
+            ? '⚖️ 債券實例：🛡️ 政府公債超穩  VS  💣 高息垃圾債可能倒債！'
+            : '📜 方法 ② 債券：你當銀行，借錢給國家或大企業領固定利息！',
+          currentScene === 'mid_bond_risk' ? '#ffd43b' : '#38bdf8'
+        );
+        ctx.fillStyle = '#0f2538';
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.roundRect(W * 0.1, H * 0.26, W * 0.34, 115, 14);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '900 19px "Noto Sans TC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🛡️ 政府公債 (高信用)', W * 0.27, H * 0.37);
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '800 14px "Noto Sans TC", sans-serif';
+        ctx.fillText('穩定領息・當防守盾牌', W * 0.27, H * 0.48);
+
+        ctx.fillStyle = '#291018';
+        ctx.strokeStyle = '#ff4757';
+        ctx.beginPath();
+        ctx.roundRect(W * 0.56, H * 0.26, W * 0.34, 115, 14);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#ff4757';
+        ctx.font = '900 19px "Noto Sans TC", sans-serif';
+        ctx.fillText('💣 高息垃圾債 (低信用)', W * 0.73, H * 0.37);
+        ctx.fillStyle = '#fecdd3';
+        ctx.font = '800 14px "Noto Sans TC", sans-serif';
+        ctx.fillText('利息誘人・公司倒就拿不回！', W * 0.73, H * 0.48);
+
+        drawStick(ctx, W * 0.5, gy - 34, sc * 0.88, currentScene === 'mid_bond_risk' ? COLORS.yellow : COLORS.green, t, 'think');
+        break;
+      }
+
+      case 'adv_prep_budget': {
+        drawBanner('📦 16 歲現在準備 ①：零用錢「四桶分帳法」練習！', '#22e584');
+        const buckets = [
+          { ic: '🍱', t: '生活需要', c: '#38bdf8' },
+          { ic: '🛡️', t: '緊急備用金', c: '#22e584' },
+          { ic: '🌱', t: '未來儲蓄', c: '#ffd43b' },
+          { ic: '🎮', t: '開心娛樂', c: '#ff7a2f' }
+        ];
+        const cw = Math.min(160, (W - 70) / 4);
+        const sx = (W - (cw * 4 + 36)) / 2;
+        buckets.forEach((b, i) => {
+          const x = sx + i * (cw + 12);
+          ctx.fillStyle = '#0e172a';
+          ctx.strokeStyle = b.c;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.roundRect(x, H * 0.26, cw, H * 0.52, 14);
+          ctx.fill();
+          ctx.stroke();
+          ctx.font = '38px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(b.ic, x + cw / 2, H * 0.46);
+          ctx.fillStyle = b.c;
+          ctx.font = '900 16px "Noto Sans TC", sans-serif';
+          ctx.fillText(b.t, x + cw / 2, H * 0.65);
+        });
+        break;
+      }
+
+      case 'adv_prep_shield': {
+        drawGround();
+        drawBanner('🛡️ 現在準備 ②：先存下第一筆「緊急備用金」安全 HP！', '#38bdf8');
+        drawHPBar(ctx, W * 0.28, H * 0.25, W * 0.44, '🛡️ 緊急備用金護盾（急用現金不進股市！）', 100, 100, '#22e584');
+        drawStick(ctx, W * 0.5, gy - 34, sc, COLORS.green, t, 'cheer');
+        break;
+      }
+
+      case 'adv_prep_parents': {
+        drawGround();
+        drawBanner('📝 現在準備 ③：找爸媽討論理財 ＋ 零風險「紙上模擬觀察」！', '#ffd43b');
+        drawStick(ctx, W * 0.34, gy - 34, sc, COLORS.green, t, 'wave');
+        drawStick(ctx, W * 0.52, gy - 34, sc * 0.95, COLORS.blue, t, 'wave');
+        ctx.fillStyle = '#111b30';
+        ctx.strokeStyle = '#ffd43b';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.roundRect(W * 0.64, H * 0.28, W * 0.26, 110, 12);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#ffd43b';
+        ctx.font = '900 17px "Noto Sans TC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('📓 紙上記錄練習', W * 0.77, H * 0.4);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '800 14px "Noto Sans TC", sans-serif';
+        ctx.fillText('不花真錢也能練手感!', W * 0.77, H * 0.5);
+        break;
+      }
+
+      case 'adv_learn_path': {
+        drawBanner('🧭 未來進修 4 大學習方向（越學越強！）', '#ffd43b');
+        const paths = [
+          { ic: '🧺', t1: '① ETF 細節', t2: '成分股與費用率', c: '#22e584' },
+          { ic: '📊', t1: '② 基礎財報', t2: '營收・現金・負債', c: '#38bdf8' },
+          { ic: '🌍', t1: '③ 總體經濟', t2: '利率・通膨・景氣', c: '#ffd43b' },
+          { ic: '📚', t1: '④ 行為財務', t2: '克服人性貪與怕', c: '#ff7a2f' }
+        ];
+        const cw = Math.min(160, (W - 70) / 4);
+        const sx = (W - (cw * 4 + 36)) / 2;
+        paths.forEach((p, i) => {
+          const x = sx + i * (cw + 12);
+          ctx.fillStyle = '#0e172a';
+          ctx.strokeStyle = p.c;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.roundRect(x, H * 0.25, cw, H * 0.54, 14);
+          ctx.fill();
+          ctx.stroke();
+          ctx.font = '34px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(p.ic, x + cw / 2, H * 0.42);
+          ctx.fillStyle = p.c;
+          ctx.font = '900 15px "Noto Sans TC", sans-serif';
+          ctx.fillText(p.t1, x + cw / 2, H * 0.58);
+          ctx.fillStyle = '#cbd5e1';
+          ctx.font = '700 13px "Noto Sans TC", sans-serif';
+          ctx.fillText(p.t2, x + cw / 2, H * 0.7);
+        });
+        break;
+      }
+
       // ---------- GRAND TRUE ENDING (100/100) ----------
       case 'grand_ending':
       case 'true_ending': {
         drawGround(0.84, '#ffd43b');
-        drawBanner('👑 GRAND TRUE ENDING：小綠完成【初・中・高階】全部 100 幕！', '#ffd43b');
+        drawBanner('👑 GRAND TRUE ENDING：小綠完成【初・中・高級】全部 100 幕！', '#ffd43b');
         if (Math.random() < 0.08) {
           burst(W * (0.12 + Math.random() * 0.76), H * (0.18 + Math.random() * 0.32), 26, ['#22e584', '#ffd43b', '#38bdf8', '#ffffff'], 5.5, 4);
         }
