@@ -1,8 +1,8 @@
 /* ============================================================
-   story.js — 《小綠的防破產大作戰》90 幕三等級完整劇本
-   🌱 初階 (1–30)：風險、槓桿、台灣真實破產案例（雙卡、次貸、五貸同堂）
-   ⚡ 中階 (31–60)：違約交割/當沖、通膨複利、ETF、微笑曲線、除息真相、反詐騙
-   🏆 高階 (61–90)：資產配置/再平衡、期貨選擇權/50X插針、人性陷阱、地雷體檢、終極魔王
+   story.js — 《小綠的投資大作戰》100 幕三等級完整劇本
+   🌱 初階 (1–33)：風險、槓桿、FX戰士久留美爆倉①、雙卡/次貸/五貸同堂
+   ⚡ 中階 (34–66)：違約交割/當沖、久留美爆倉②(芽吹式盲從)、通膨複利、ETF、微笑曲線、除息、反詐騙
+   🏆 高階 (67–100)：資產配置、期貨50X、久留美爆倉③(報復性交易與半夜盯盤)、心理陷阱、體檢、終極魔王
    主角：🟢 小綠（代表 16 歲的易軒）
    ============================================================ */
 
@@ -16,9 +16,9 @@ export const SPEAKERS = {
 };
 
 export const TIERS = [
-  { id: 'beginner', label: '🌱 初階', title: '防破產基礎篇', start: 0, end: 29, color: '#22e584' },
-  { id: 'intermediate', label: '⚡ 中階', title: '台灣實戰避坑篇', start: 30, end: 59, color: '#38bdf8' },
-  { id: 'advanced', label: '🏆 高階', title: '大師心法系統篇', start: 60, end: 89, color: '#ffd43b' }
+  { id: 'beginner', label: '🌱 初階', title: '防破產基礎篇', start: 0, end: 32, color: '#22e584' },
+  { id: 'intermediate', label: '⚡ 中階', title: '台灣實戰避坑篇', start: 33, end: 65, color: '#38bdf8' },
+  { id: 'advanced', label: '🏆 高階', title: '大師心法系統篇', start: 66, end: 99, color: '#ffd43b' }
 ];
 
 export const SCENES = [
@@ -128,6 +128,33 @@ export const SCENES = [
     sfx: 'explosion',
     shake: true,
     text: '更可怕的是「暴跌 20%」：$1,000 跌剩 $800，\n不夠還銀行 $900！不只本金歸零，還【倒欠銀行錢】！'
+  },
+  {
+    tier: 'beginner',
+    chapter: '第 3 章｜致敬《FX戰士久留美》爆倉名場面 ①',
+    scene: 'kurumi_pray',
+    speaker: 'red',
+    mood: 'shock',
+    sfx: 'hit',
+    text: '就像經典漫畫《FX戰士久留美》裡最恐怖的一幕：\n帳面已經狂虧，卻死不按停損，雙手合十對手機大喊「神啊拜託漲回去…」！'
+  },
+  {
+    tier: 'beginner',
+    chapter: '第 3 章｜致敬《FX戰士久留美》爆倉名場面 ①',
+    scene: 'kurumi_add_margin',
+    speaker: 'red',
+    mood: 'cry',
+    text: '看到快被強制平倉，還慌張把全部存款和獎學金「一直補進去拉高防線」，\n心想「有槓桿撐一下就會反彈」……結果越補洞越大！'
+  },
+  {
+    tier: 'beginner',
+    chapter: '第 3 章｜致敬《FX戰士久留美》爆倉名場面 ①',
+    scene: 'kurumi_roscut',
+    speaker: 'yellow',
+    mood: 'shock',
+    sfx: 'explosion',
+    shake: true,
+    text: '叮咚！【🚨 強制平倉通知（ROSCUT）】！！\n只要走勢再多晃一點點，連同剛才補進去的救命錢，0.1 秒全部蒸發歸零！'
   },
   {
     tier: 'beginner',
@@ -334,11 +361,11 @@ export const SCENES = [
     mood: 'happy',
     sfx: 'victory',
     tierClear: 'beginner',
-    text: '恭喜易軒完成【🌱 初階：防破產基礎篇 (30/30)】！\n按「下一頁」直接升級進入【⚡ 中階：台灣實戰避坑篇】！'
+    text: '恭喜易軒完成【🌱 初階：防破產基礎篇 (33/100)】！\n按「下一頁」直接升級進入【⚡ 中階：台灣實戰避坑篇】！'
   },
 
   // =========================================================================
-  // ⚡ 中階（第 31 ～ 60 幕）：台灣實戰規則、ETF、複利、除息與反詐騙
+  // ⚡ 中階（第 34 ～ 66 幕）：台灣實戰規則、久留美教訓②、ETF、複利、除息與反詐騙
   // =========================================================================
   {
     tier: 'intermediate',
@@ -373,6 +400,51 @@ export const SCENES = [
     speaker: 'green',
     mood: 'serious',
     text: '違約交割超嚴重！不只帳戶被凍結、賠巨額違約金，嚴重還會吃官司！\n鐵則：【戶頭有多少現金，最多就只買多少，絕不玩無本當沖】！'
+  },
+  {
+    tier: 'intermediate',
+    chapter: '第 8 章｜致敬《FX戰士久留美》爆倉名場面 ②',
+    scene: 'kurumi_blind_follow',
+    speaker: 'yellow',
+    mood: 'shock',
+    sfx: 'hit',
+    text: '看過《FX戰士久留美》裡的「芽吹式慘案」嗎？\n完全不懂原理、只想靠抱大腿聽明牌賺快錢，還把獎學金＋刷卡借錢全砸進 25 倍 FX！'
+  },
+  {
+    tier: 'intermediate',
+    chapter: '第 8 章｜致敬《FX戰士久留美》爆倉名場面 ②',
+    scene: 'kurumi_betrayed',
+    speaker: 'red',
+    mood: 'cry',
+    sfx: 'explosion',
+    shake: true,
+    text: '最殘酷的是：報明牌給她的人，自己私下卻做反方向！\n毫無章法又到處借錢加碼，最後一秒強制平倉、血本無歸還欠一屁股債！'
+  },
+  {
+    tier: 'intermediate',
+    chapter: '第 8 章｜久留美名場面抉擇',
+    scene: 'kurumi_choice_margin',
+    speaker: 'red',
+    mood: 'shock',
+    sfx: 'hit',
+    text: '手機狂震！螢幕跳出【⚠️ 保證金維持率 55%，即將強制平倉】！\n小紅哭著問你：「要把最後的學費和借來的錢補進去硬凹等反彈嗎？！」',
+    choice: {
+      prompt: '⚡ 久留美經典瞬間！易軒（小綠）怎麼決定？',
+      options: [
+        {
+          label: '🙏 祈禱漲回去！把學費＋借來的錢全補進保證金硬凹！',
+          correct: false,
+          gameoverScene: 'gameover_roscut',
+          gameoverTitle: '💀 GAME OVER — 叮咚！強制平倉通知（ROSCUT）！',
+          gameoverText: '「神啊拜託漲回去…」話還沒說完，匯率一根長紅衝破防線！\n連最後補進去的學費和借來的錢，0.1 秒全部蒸發歸零！'
+        },
+        {
+          label: '✂️ 立刻止血不補錢！絕不借錢凹單，從此戒掉高槓桿 FX！',
+          correct: true,
+          winText: '保住人生了！虧損時絕不能拿學費和借來的錢去補高槓桿黑洞！'
+        }
+      ]
+    }
   },
   {
     tier: 'intermediate',
@@ -641,11 +713,11 @@ export const SCENES = [
     mood: 'happy',
     sfx: 'victory',
     tierClear: 'intermediate',
-    text: '超強！！你已經完成【⚡ 中階：台灣實戰避坑篇 (60/90)】！\n按「下一頁」前進最終殿堂【🏆 高階：大師心法系統篇】！'
+    text: '超強！！你已經完成【⚡ 中階：台灣實戰避坑篇 (66/100)】！\n按「下一頁」前進最終殿堂【🏆 高階：大師心法系統篇】！'
   },
 
   // =========================================================================
-  // 🏆 高階（第 61 ～ 90 幕）：資產配置、衍生品爆倉真相、人性陷阱與終身藍圖
+  // 🏆 高階（第 67 ～ 100 幕）：資產配置、衍生品爆倉、久留美教訓③、人性陷阱與終身藍圖
   // =========================================================================
   {
     tier: 'advanced',
@@ -720,6 +792,40 @@ export const SCENES = [
     speaker: 'green',
     mood: 'serious',
     text: '買好公司是跟企業一起把餅做大（正和遊戲）；\n高倍數合約與當沖是互相搶錢還要扣手續費（負和賭場），絕不碰！'
+  },
+  {
+    tier: 'advanced',
+    chapter: '第 15 章｜致敬《FX戰士久留美》爆倉名場面 ③',
+    scene: 'kurumi_revenge_trade',
+    speaker: 'yellow',
+    mood: 'shock',
+    sfx: 'hit',
+    text: '《FX戰士久留美》最讓人背脊發涼的心魔叫【報復性交易】：\n滿腦子想著「要把以前虧掉的錢一口氣贏回來」，結果越賭越大、越輸越慘！'
+  },
+  {
+    tier: 'advanced',
+    chapter: '第 15 章｜致敬《FX戰士久留美》爆倉名場面 ③',
+    scene: 'kurumi_3am_chart',
+    speaker: 'red',
+    mood: 'cry',
+    text: '半夜三點還在死盯手機 K 線、心跳狂飆 140、吃不下也睡不著……\n高槓桿就算暫時沒爆倉，也會把你的健康、課業和快樂全部榨乾！'
+  },
+  {
+    tier: 'advanced',
+    chapter: '第 15 章｜致敬《FX戰士久留美》爆倉名場面 ③',
+    scene: 'kurumi_peace_sleep',
+    speaker: 'green',
+    mood: 'happy',
+    sfx: 'shield',
+    text: '所以《FX戰士久留美》裡有句名言：「沒有未實現虧損焦慮的感覺超爽！」\n不開槓桿、用閒錢穩穩存大盤 ETF，每天安心睡到自然醒才是真贏家！'
+  },
+  {
+    tier: 'advanced',
+    chapter: '第 15 章｜致敬《FX戰士久留美》爆倉名場面 ③',
+    scene: 'kurumi_author_warn',
+    speaker: 'blue',
+    mood: 'cool',
+    text: '記住一個最簡單的自我檢查：\n【如果一筆投資讓你晚上睡不著覺，就代表你買太大、或開槓桿了！】'
   },
   {
     tier: 'advanced',
@@ -946,6 +1052,6 @@ export const SCENES = [
     sfx: 'victory',
     tierClear: 'advanced',
     isEnding: true,
-    text: '恭喜易軒全破【初階・中階・高階】全部 90 幕修練！！\n記住小綠一輩子的超能力：不借錢、不開槓桿、懂風險、用時間慢慢變富！'
+    text: '恭喜易軒全破【初階・中階・高階】全部 100 幕修練！！\n記住小綠一輩子的超能力：不借錢、不開槓桿、懂風險、用時間慢慢變富！'
   }
 ];

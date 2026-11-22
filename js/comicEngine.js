@@ -357,6 +357,8 @@ export function createComicStage(canvas) {
       sceneKey === 'mid_limit_down' ||
       sceneKey === 'mid_crash_panic' ||
       sceneKey === 'adv_50x_wick' ||
+      sceneKey === 'kurumi_roscut' ||
+      sceneKey === 'kurumi_betrayed' ||
       sceneKey.startsWith('gameover_')
     ) {
       burst(W * 0.55, H * 0.5, 55, ['#ff4757', '#ff7a2f', '#ffd43b', '#ffffff'], 7, 5);
@@ -1020,7 +1022,7 @@ export function createComicStage(canvas) {
         const accent = isT1 ? '#22e584' : '#38bdf8';
         drawGround(0.84, accent);
         drawBanner(
-          isT1 ? '🌱 初階通關！(30/90) ➔ 解鎖 ⚡ 中階實戰篇！' : '⚡ 中階通關！(60/90) ➔ 解鎖 🏆 高階大師篇！',
+          isT1 ? '🌱 初階通關！(33/100) ➔ 解鎖 ⚡ 中階實戰篇！' : '⚡ 中階通關！(66/100) ➔ 解鎖 🏆 高階大師篇！',
           accent
         );
         if (Math.random() < 0.05) {
@@ -1640,6 +1642,200 @@ export function createComicStage(canvas) {
         break;
       }
 
+      // ================================================================
+      // 📖 致敬《FX戰士久留美》經典爆倉名場面視覺引擎
+      // ================================================================
+      case 'kurumi_pray': {
+        ctx.fillStyle = '#090308';
+        ctx.fillRect(0, 0, W, H);
+        drawGround(0.84, 'rgba(255,71,87,0.45)');
+        drawBanner('📱 久留美名場面 ①：未實現虧損狂跳，雙手合十祈禱反彈…', '#ff4757');
+        // Giant glowing smartphone screen with plunging FX chart
+        const px = W * 0.56;
+        const py = H * 0.2;
+        ctx.fillStyle = '#18080e';
+        ctx.strokeStyle = '#ff4757';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.roundRect(px, py, W * 0.3, H * 0.56, 16);
+        ctx.fill();
+        ctx.stroke();
+
+        // Falling FX line
+        ctx.strokeStyle = '#ff4757';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(px + 20, py + 45);
+        ctx.lineTo(px + W * 0.1, py + 70);
+        ctx.lineTo(px + W * 0.18, py + 110);
+        ctx.lineTo(px + W * 0.26, py + H * 0.44);
+        ctx.stroke();
+
+        // Pulsing floating loss
+        const loss = 120000 + Math.floor(Math.abs(Math.sin(t * 7)) * 45000);
+        ctx.fillStyle = '#ff4757';
+        ctx.font = '900 18px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(`-${loss.toLocaleString()}`, px + W * 0.15, py + 30);
+
+        drawStick(ctx, W * 0.32, gy - 14, sc, COLORS.red, t, 'kneel', { sweat: true });
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '900 18px "Noto Sans TC", sans-serif';
+        ctx.fillText('🙏 神啊拜託漲回去…', W * 0.32, H * 0.44 + Math.sin(t * 6) * 4);
+        break;
+      }
+
+      case 'kurumi_add_margin': {
+        ctx.fillStyle = 'rgba(140, 12, 24, 0.2)';
+        ctx.fillRect(0, 0, W, H);
+        drawGround();
+        drawBanner('💸 死不停損！把獎學金＋存款狂補進「保證金」拉高防線…', '#ff7a2f');
+        drawHPBar(ctx, W * 0.28, H * 0.25, W * 0.44, '⚠️ 保證金維持率（跌破 50% 強制平倉！）', 52 + Math.round(Math.sin(t * 9) * 2), 100, '#ff7a2f');
+        drawStick(ctx, W * 0.32, gy - 36, sc, COLORS.red, t, 'shock', { sweat: true });
+        ctx.fillStyle = '#ffd43b';
+        ctx.font = '900 20px "Noto Sans TC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🎓 獎學金 ＋ 💰 存款 ➔ 丟進無底洞！', W * 0.64, H * 0.6);
+        break;
+      }
+
+      case 'kurumi_roscut': {
+        ctx.fillStyle = `rgba(200, 15, 30, ${0.28 + Math.sin(t * 12) * 0.1})`;
+        ctx.fillRect(0, 0, W, H);
+        drawGround(0.84, '#ff4757');
+        // Iconic ROSCUT Notification Popup!
+        ctx.fillStyle = '#1f060c';
+        ctx.strokeStyle = '#ff4757';
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.roundRect(W * 0.16, H * 0.15, W * 0.68, H * 0.34, 16);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#ff4757';
+        ctx.font = `900 ${Math.min(28, W * 0.044)}px "Noto Sans TC", sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText('🚨 強制平倉通知（ROSCUT）', W * 0.5, H * 0.27);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '900 17px "Noto Sans TC", sans-serif';
+        ctx.fillText('保證金不足，已全部強制清算！餘額：$0', W * 0.5, H * 0.4);
+
+        drawStick(ctx, W * 0.5, gy - 12, sc, COLORS.red, t, 'fall', { tears: true });
+        break;
+      }
+
+      case 'kurumi_blind_follow':
+      case 'kurumi_betrayed': {
+        ctx.fillStyle = currentScene === 'kurumi_betrayed' ? 'rgba(170, 15, 30, 0.24)' : '#05070c';
+        ctx.fillRect(0, 0, W, H);
+        drawGround();
+        drawBanner(
+          currentScene === 'kurumi_betrayed'
+            ? '🎭 報明牌的人私下做反方向！盲從加借錢瞬間爆倉！'
+            : '📖 芽吹式經典慘案：獎學金＋刷卡＋借錢全砸 25 倍 FX！',
+          '#ff4757'
+        );
+        drawStick(ctx, W * 0.36, gy - 36, sc, COLORS.red, t, currentScene === 'kurumi_betrayed' ? 'kneel' : 'hype', { tears: currentScene === 'kurumi_betrayed' });
+        drawStick(ctx, W * 0.72, gy - 36, sc, COLORS.boss, t, 'point');
+        ctx.fillStyle = '#ffd43b';
+        ctx.font = '900 17px "Noto Sans TC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🎓獎學金 ＋ 💳刷卡 ＋ 🤝借錢 ➔ FX 25X', W * 0.38, H * 0.3);
+        ctx.fillStyle = '#ff7a2f';
+        ctx.fillText(currentScene === 'kurumi_betrayed' ? '😈 (私下做反方向大賺!)' : '😈 聽我的穩賺！', W * 0.72, H * 0.3);
+        break;
+      }
+
+      case 'kurumi_choice_margin': {
+        ctx.fillStyle = `rgba(160, 15, 30, ${0.16 + Math.sin(t * 8) * 0.06})`;
+        ctx.fillRect(0, 0, W, H);
+        drawGround(0.84, '#ff4757');
+        drawBanner('📱 手機狂震！保證金維持率 55%，即將強制平倉！', '#ffd43b');
+        drawHPBar(ctx, W * 0.28, H * 0.25, W * 0.44, '⚠️ FX 25X 保證金防線（快斷頭了！）', 55, 100, '#ff4757');
+        drawStick(ctx, W * 0.35, gy - 36, sc, COLORS.green, t, 'think');
+        drawStick(ctx, W * 0.65, gy - 36, sc, COLORS.red, t, 'cry', { tears: true });
+        break;
+      }
+
+      case 'kurumi_revenge_trade': {
+        ctx.fillStyle = 'rgba(150, 10, 25, 0.22)';
+        ctx.fillRect(0, 0, W, H);
+        drawGround();
+        drawBanner('🌀 報復性交易心魔：「我要把虧掉的錢一口氣贏回來！」', '#ff4757');
+        // Spinning red spiral behind Red
+        ctx.save();
+        ctx.translate(W * 0.5, H * 0.48);
+        ctx.rotate(t * 3);
+        ctx.strokeStyle = 'rgba(255,71,87,0.55)';
+        ctx.lineWidth = 4;
+        ctx.setLineDash([14, 10]);
+        ctx.beginPath();
+        ctx.arc(0, 0, 88, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(0, 0, 56, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+        drawStick(ctx, W * 0.5, gy - 36, sc, COLORS.red, t, 'hype', { sweat: true });
+        break;
+      }
+
+      case 'kurumi_3am_chart': {
+        ctx.fillStyle = '#03050a';
+        ctx.fillRect(0, 0, W, H);
+        drawGround(0.84, 'rgba(255,71,87,0.35)');
+        drawBanner('🕒 半夜 03:00 死盯手機 K 線 ➔ 心跳 140、失眠焦慮！', '#ff4757');
+        // Digital 03:00 AM clock
+        ctx.fillStyle = '#ff4757';
+        ctx.font = '900 34px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('03:00 AM', W * 0.26, H * 0.35);
+        ctx.fillStyle = '#ff7a2f';
+        ctx.font = '900 20px monospace';
+        ctx.fillText('💓 140 BPM!', W * 0.26, H * 0.48);
+
+        // Glowing K-line screen
+        ctx.fillStyle = '#0f172a';
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 3;
+        ctx.fillRect(W * 0.56, H * 0.24, W * 0.28, H * 0.36);
+        ctx.strokeRect(W * 0.56, H * 0.24, W * 0.28, H * 0.36);
+        for (let i = 0; i < 6; i++) {
+          const ch = 20 + Math.abs(Math.sin(t * 6 + i)) * 55;
+          ctx.fillStyle = i % 2 === 0 ? '#22e584' : '#ff4757';
+          ctx.fillRect(W * 0.59 + i * 28, H * 0.44 - ch / 2, 14, ch);
+        }
+        drawStick(ctx, W * 0.46, gy - 36, sc * 0.95, COLORS.red, t, 'shock', { sweat: true });
+        break;
+      }
+
+      case 'kurumi_peace_sleep':
+      case 'kurumi_author_warn': {
+        const sky = ctx.createLinearGradient(0, 0, 0, H);
+        sky.addColorStop(0, '#061124');
+        sky.addColorStop(1, '#0d1f3a');
+        ctx.fillStyle = sky;
+        ctx.fillRect(0, 0, W, H);
+        drawGround(0.84, '#22e584');
+        drawBanner(
+          currentScene === 'kurumi_author_warn'
+            ? '🌙 黃金檢查：讓你晚上睡不著的投資，就是買太大或開槓桿了！'
+            : '💤 沒有槓桿焦慮的感覺超爽！安心睡到自然醒才是真贏家！',
+          '#22e584'
+        );
+        // Stars & Moon
+        ctx.fillStyle = '#ffd43b';
+        ctx.font = '40px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🌙', W * 0.2, H * 0.3);
+        ctx.fillStyle = '#22e584';
+        ctx.font = '900 28px monospace';
+        ctx.fillText('Zzz...', W * 0.58, H * 0.38 + Math.sin(t * 2.5) * 8);
+        drawStick(ctx, W * 0.5, gy - 36, sc * 1.05, COLORS.green, t, 'wave');
+        break;
+      }
+
       // ---------- GAME OVER BANKRUPTCY SCENES ----------
       case 'gameover_leverage':
       case 'gameover_fiveloans':
@@ -1647,6 +1843,7 @@ export function createComicStage(canvas) {
       case 'gameover_daytrade':
       case 'gameover_50x':
       case 'gameover_landmine':
+      case 'gameover_roscut':
       case 'gameover_boss': {
         ctx.fillStyle = '#160408';
         ctx.fillRect(0, 0, W, H);
@@ -1664,6 +1861,7 @@ export function createComicStage(canvas) {
           gameover_daytrade: '🔒 無本當沖遇跌停鎖死 ➔ 違約交割信用全毀！',
           gameover_50x: '⚡ 50 倍合約僅晃動 -2% ➔ 0.5 秒強制爆倉！',
           gameover_landmine: '💣 連虧高負債地雷股下市 ➔ 股票變壁紙！',
+          gameover_roscut: '🚨 叮咚！強制平倉通知（ROSCUT）➔ 補進去的錢全部蒸發！',
           gameover_boss: '💀 貪心碰槓桿與借貸 ➔ 遭破產魔王吞噬！'
         };
         ctx.fillText(reasonMap[currentScene] || '💀 財務 HP 歸零破產！', W * 0.5, H * 0.37);
@@ -1672,11 +1870,11 @@ export function createComicStage(canvas) {
         break;
       }
 
-      // ---------- GRAND TRUE ENDING (90/90) ----------
+      // ---------- GRAND TRUE ENDING (100/100) ----------
       case 'grand_ending':
       case 'true_ending': {
         drawGround(0.84, '#ffd43b');
-        drawBanner('👑 GRAND TRUE ENDING：易軒完成【初・中・高階】全部 90 幕！', '#ffd43b');
+        drawBanner('👑 GRAND TRUE ENDING：易軒完成【初・中・高階】全部 100 幕！', '#ffd43b');
         if (Math.random() < 0.08) {
           burst(W * (0.12 + Math.random() * 0.76), H * (0.18 + Math.random() * 0.32), 26, ['#22e584', '#ffd43b', '#38bdf8', '#ffffff'], 5.5, 4);
         }
