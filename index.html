@@ -3,243 +3,75 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>易軒的投資片場 🎬 16歲從0開始｜漫畫情境跑馬燈×動畫特效學投資</title>
-  <meta name="description" content="專為16歲易軒設計的互動動畫投資學習網站：融合桌面大戰、機甲核心、奇幻馬戲團與災難電影特效，用漫畫情境跑馬燈與動畫實驗，從0建立正確理財與投資觀念。" />
+  <title>小綠的投資冒險 💚 易軒的火柴人投資漫畫</title>
+  <meta name="description" content="專為16歲易軒設計的 Undertale 風格火柴人漫畫互動教學：從 0 認識投資風險、槓桿與台灣真實破產案例。" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <canvas id="confetti-canvas"></canvas>
+  <main class="app-container">
+    <!-- ==================== SCREEN 1: TITLE SCREEN ==================== -->
+    <section id="screen-title" class="title-screen">
+      <div class="title-kicker">💚 易軒的 16 歲投資冒險</div>
+      <h1 class="game-title"><span class="hl">小綠</span>的防破產大作戰</h1>
 
-  <!-- Sticky Cinema Topbar -->
-  <header class="topbar">
-    <div class="topbar-inner">
-      <button class="brand-btn" id="btn-home-logo" aria-label="回到首頁">
-        <span class="brand-badge">🎬</span>
-        <span>
-          <span class="brand-title">易軒的投資片場</span>
-          <span class="brand-sub">16歲 × 漫畫跑馬燈×動畫特效</span>
-        </span>
-      </button>
-
-      <div class="topbar-stats">
-        <div class="stat-chip" title="通關進度">
-          <span>⭐</span>
-          <span class="num" id="stat-stars">0/6</span>
-        </div>
-        <div class="stat-chip" title="能量金幣">
-          <span>🪙</span>
-          <span class="num" id="stat-coins">0</span>
-        </div>
-        <button class="tool-btn active" id="btn-toggle-sfx">🎵 電影音效：開</button>
-        <button class="tool-btn sandbox-shortcut" id="btn-open-sandbox-top">🌋 10年電影模擬</button>
-      </div>
-    </div>
-  </header>
-
-  <main class="main-wrap">
-    <!-- ==================== VIEW 1: HOME HUB ==================== -->
-    <section id="view-home" class="view-section">
-      <!-- Hero Cinema Stage -->
-      <div class="hero-stage">
-        <img class="hero-bg-img" src="assets/world_disaster_vfx.jpg" alt="" />
-        <div class="hero-scrim"></div>
-
-        <div class="hero-content">
-          <h1 class="hero-title">
-            易軒，用<span class="accent">漫畫＋特效動畫</span><br />
-            從 0 學會正確投資！
-          </h1>
-          <p class="hero-short-line">
-            <span class="hero-tag">👀 免看一堆字</span>
-            <span class="hero-tag">💬 漫畫情境跑馬燈</span>
-            <span class="hero-tag">🎮 動手玩特效秒懂</span>
-          </p>
-          <div class="hero-actions">
-            <button class="btn btn-gold" id="btn-hero-start">🎬 第 1 關：立刻開拍！</button>
-            <button class="btn btn-cyan" id="btn-hero-comics">💬 看漫畫情境跑馬燈</button>
-          </div>
-        </div>
-
-        <div class="hero-visual-panel">
-          <div class="hero-poster-frame">
-            <img src="assets/world_launch_ark.jpg" alt="16歲財富起飛方舟" />
-          </div>
-          <div class="world-cast-strip">
-            <span class="cast-pill">🔥 桌面大戰</span>
-            <span class="cast-pill">🤖 無機殺手核心</span>
-            <span class="cast-pill">🎪 奇幻馬戲團</span>
-            <span class="cast-pill">🌋 災難特效</span>
-          </div>
-        </div>
+      <div class="title-stage-box">
+        <canvas id="title-canvas"></canvas>
       </div>
 
-      <!-- Home Comic Scenario Marquee -->
-      <div id="home-comic-marquee"></div>
+      <div class="title-actions">
+        <!-- Shown only when saved progress exists -->
+        <button id="btn-continue" class="ut-btn primary hidden">▶ 繼續上次的進度</button>
+        <p id="save-note" class="title-save-note hidden"></p>
 
-      <!-- Visual Badge Progress Strip -->
-      <div class="mission-bar" aria-label="勳章進度條">
-        <div class="mission-bar-left">
-          <span>🏆 投資勳章收集</span>
-        </div>
-        <div class="progress-track">
-          <div class="progress-fill" id="home-progress-fill"></div>
-        </div>
-        <div class="badge-row" id="home-badge-row"></div>
-      </div>
-
-      <!-- 6 Movie World Chapters -->
-      <div class="section-heading">
-        <h2>🎞️ 選一個片場開始冒險（共 6 關）</h2>
-      </div>
-      <div class="chapter-grid" id="chapter-grid"></div>
-
-      <!-- Bonus Boss Simulator Banner -->
-      <div class="sandbox-banner">
-        <img class="sandbox-banner-bg" src="assets/world_disaster_vfx.jpg" alt="" />
-        <div class="sandbox-banner-scrim"></div>
-        <div class="sandbox-banner-content">
-          <h3>🎬 終極片場：16歲 ➔ 26歲「末日投資電影模擬」</h3>
-          <p>☄️ 隕石股災 × 🚨 詐騙入侵 × 🌋 通膨火山！零風險試玩 10 年！</p>
-        </div>
-        <div class="sandbox-banner-cta">
-          <button class="btn btn-crimson" id="btn-open-sandbox-banner">🚀 立刻開拍 10 年大片！</button>
-        </div>
+        <!-- Primary START button (always shown; styled primary if first play) -->
+        <button id="btn-start" class="ut-btn primary">▶ START</button>
       </div>
     </section>
 
-    <!-- ==================== VIEW 2: LESSON STAGE ==================== -->
-    <section id="view-stage" class="view-section hidden">
-      <div class="stage-header">
-        <div class="stage-title-group">
-          <button class="btn btn-ghost" id="btn-back-home" style="padding:10px 16px;font-size:0.95rem;">⬅️ 回片場大廳</button>
-          <span class="stat-chip" id="stage-world-badge">🔥 桌面大戰</span>
-          <h1 id="stage-title">第 1 關</h1>
+    <!-- ==================== SCREEN 2: STORY COMIC SCREEN ==================== -->
+    <section id="screen-story" class="story-screen hidden">
+      <!-- Quiet minimal progress header -->
+      <div class="story-meta-bar">
+        <span class="chapter-label" id="chapter-label">第 1 章</span>
+        <div class="meta-right">
+          <span id="page-counter">1 / 30</span>
+          <button id="btn-mute" class="mute-tiny-btn" aria-label="音效開關">🔊 音效</button>
         </div>
       </div>
 
-      <!-- 3-Step Visual Stepper -->
-      <div class="step-tabs">
-        <button class="step-tab active" id="tab-play">① 💬 漫畫＋動畫實驗</button>
-        <button class="step-tab" id="tab-quiz">② 🎯 3題圖示闖關</button>
-        <button class="step-tab" id="tab-medal" disabled>③ 🏆 領專屬勳章</button>
+      <!-- 1 Big Animated Alan Becker Stickman Comic Panel -->
+      <div class="comic-frame" id="comic-frame">
+        <canvas id="comic-canvas"></canvas>
       </div>
 
-      <!-- STEP 1: Chapter Comic Marquee + Interactive Canvas Animation Theater -->
-      <div id="pane-play" class="theater-shell">
-        <!-- Chapter 4-Panel Comic Scenario Marquee -->
-        <div id="stage-comic-marquee"></div>
-
-        <!-- Live Comic Reaction Speech Strip -->
-        <div class="comic-live-banner" id="stage-comic-reaction">
-          <span class="comic-live-avatar" id="stage-react-avatar">🔥 阿火</span>
-          <div class="comic-live-bubble" id="stage-react-bubble">點下面按鈕玩玩看！</div>
+      <!-- Classic Undertale Black/White Dialogue Box -->
+      <div class="ut-dialogue-box" id="dialogue-box" title="點一下可快速顯示完整句子">
+        <div class="portrait-wrap">
+          <canvas id="portrait-canvas" width="96" height="96"></canvas>
         </div>
-
-        <div class="canvas-frame">
-          <canvas id="stage-canvas"></canvas>
-        </div>
-
-        <div class="controls-deck" id="stage-controls"></div>
-
-        <div class="takeaway-bar">
-          <div class="takeaway-text">
-            <span>💡</span>
-            <span id="play-takeaway-text"></span>
-          </div>
-          <button class="btn btn-emerald" id="btn-go-quiz">🎯 懂了！挑戰 3 題拿勳章 ➡️</button>
+        <div class="dialogue-body">
+          <div class="speaker-name" id="speaker-name">小綠（易軒）</div>
+          <p class="dialogue-text" id="dialogue-text"></p>
         </div>
       </div>
 
-      <!-- STEP 2: Icon-First 3-Question Quiz -->
-      <div id="pane-quiz" class="quiz-shell hidden">
-        <div class="quiz-progress-dots" id="quiz-dots"></div>
-
-        <div class="quiz-prompt-box">
-          <div class="quiz-big-icon" id="quiz-icon">🧋</div>
-          <h2 class="quiz-question-text" id="quiz-question">問題載入中...</h2>
-        </div>
-
-        <div class="quiz-options-grid" id="quiz-options"></div>
-        <div id="quiz-feedback" class="quiz-feedback hidden"></div>
+      <!-- Undertale 2-Choice Decision Box (shown only on the 3 choice scenes) -->
+      <div id="choice-panel" class="choice-panel hidden">
+        <div class="choice-prompt" id="choice-prompt"></div>
+        <div class="choice-grid" id="choice-grid"></div>
       </div>
 
-      <!-- STEP 3: Victory Medal Celebration -->
-      <div id="pane-medal" class="medal-card hidden">
-        <div class="medal-emblem" id="medal-icon">🏆</div>
-        <h2 id="medal-name">恭喜通關！</h2>
-        <p class="medal-slogan" id="medal-slogan"></p>
-        <div class="medal-actions">
-          <button class="btn btn-gold" id="btn-medal-next">▶️ 挑戰下一關</button>
-          <button class="btn btn-ghost" id="btn-medal-home">🏠 回片場大廳</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ==================== VIEW 3: 10-YEAR DISASTER SANDBOX ==================== -->
-    <section id="view-sandbox" class="view-section hidden">
-      <div class="stage-header">
-        <div class="stage-title-group">
-          <button class="btn btn-ghost" id="btn-sandbox-back" style="padding:10px 16px;font-size:0.95rem;">⬅️ 回片場大廳</button>
-          <h1>🎬 16歲 ➔ 26歲 末日投資電影模擬</h1>
-        </div>
-      </div>
-
-      <div class="theater-shell">
-        <div class="comic-live-banner" id="sandbox-comic-reaction">
-          <span class="comic-live-avatar" id="sandbox-react-avatar">🎬 導演</span>
-          <div class="comic-live-bubble" id="sandbox-react-bubble">「拉好下面 3 個比例，按開拍挑戰 10 年災難大片！」</div>
-        </div>
-
-        <div class="canvas-frame">
-          <canvas id="sandbox-canvas"></canvas>
-        </div>
-
-        <!-- Interactive Disaster Choice Popup -->
-        <div id="sandbox-event-box" class="event-modal-bar hidden"></div>
-
-        <!-- Final Movie Grade Poster -->
-        <div id="sandbox-result-box" class="result-poster hidden"></div>
-
-        <!-- Auto-Balancing 100% Portfolio Sliders -->
-        <div class="sandbox-setup-grid" style="margin-top:16px;">
-          <div class="alloc-card">
-            <div class="alloc-head">
-              <span>🛡️ 現金護盾</span>
-              <span class="alloc-pct" id="sb-cash-val">30%</span>
-            </div>
-            <input type="range" min="0" max="100" step="5" value="30" id="sb-cash" class="big-range" />
-            <small style="color:#94a3b8;font-weight:700;">超穩不跌，但怕通膨微縮水</small>
-          </div>
-
-          <div class="alloc-card">
-            <div class="alloc-head">
-              <span>🎪 ETF 500家大禮包</span>
-              <span class="alloc-pct" id="sb-etf-val">60%</span>
-            </div>
-            <input type="range" min="0" max="100" step="5" value="60" id="sb-etf" class="big-range" />
-            <small style="color:#22e584;font-weight:700;">分散穩健成長，主力推薦！</small>
-          </div>
-
-          <div class="alloc-card">
-            <div class="alloc-head">
-              <span>🎲 單一刺激飆股</span>
-              <span class="alloc-pct" id="sb-risky-val">10%</span>
-            </div>
-            <input type="range" min="0" max="100" step="5" value="10" id="sb-risky" class="big-range" />
-            <small style="color:#ff7a2f;font-weight:700;">可能暴漲，也可能瞬間腰斬！</small>
-          </div>
-        </div>
-
-        <div class="controls-deck">
-          <button class="btn btn-gold" id="btn-sandbox-run">🎬 開拍 10 年投資電影！（虛擬 $10,000 起步）</button>
-        </div>
+      <!-- Navigation: Strictly Prev & Next (or Retry on Game Over) -->
+      <div id="nav-row" class="nav-row">
+        <button id="btn-prev" class="ut-btn">◀ 上一頁</button>
+        <button id="btn-next" class="ut-btn primary">下一頁 ▶</button>
       </div>
     </section>
   </main>
 
-  <script type="module" src="js/app.js"></script>
+  <script type="module" src="js/game.js"></script>
 </body>
 </html>
