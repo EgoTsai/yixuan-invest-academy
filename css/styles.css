@@ -194,6 +194,68 @@ button {
   margin: -4px 0 0;
 }
 
+.tier-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  width: 100%;
+  max-width: 560px;
+  margin-top: 4px;
+}
+
+.tier-btn {
+  background: #000000;
+  border: 3px solid rgba(255, 255, 255, 0.35);
+  color: var(--white);
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-weight: 900;
+  transition: border-color 0.14s ease, color 0.14s ease, transform 0.14s ease;
+}
+
+.tier-btn:hover {
+  border-color: var(--yellow);
+  color: var(--yellow);
+  transform: translateY(-2px);
+}
+
+.tier-btn.cleared {
+  border-color: var(--green);
+}
+
+.tier-btn .tier-name {
+  font-size: 1.05rem;
+}
+
+.tier-btn .tier-sub {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.tier-pill {
+  display: inline-block;
+  padding: 2px 9px;
+  border: 2px solid var(--green);
+  color: var(--green);
+  font-size: 0.84rem;
+  font-weight: 900;
+  margin-right: 8px;
+}
+
+.tier-pill.tier-intermediate {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.tier-pill.tier-advanced {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
 /* ============================================================
    SCREEN 2: STORY COMIC STAGE (ZERO CLUTTER)
    ============================================================ */

@@ -1,13 +1,14 @@
 /* ============================================================
-   game.js — Undertale × 火柴人單線故事控制器
-   極簡流程：Title(START / 繼續進度) ➔ 單頁動態漫畫(上一頁 / 下一頁 / 2選1)
+   game.js — Undertale × 火柴人三等級（初階/中階/高階 90 幕）控制器
+   極簡流程：Title(START / 繼續進度 / 3等級切換) ➔ 單頁漫畫(上一頁 / 下一頁)
    ============================================================ */
 
-import { SCENES, SPEAKERS } from './story.js';
+import { SCENES, SPEAKERS, TIERS } from './story.js';
 import { createComicStage, drawPortrait } from './comicEngine.js';
 import { SFX } from './sfx.js';
 
-const SAVE_KEY = 'yixuan_green_stickman_save_v1';
+const SAVE_KEY = 'yixuan_green_stickman_save_v2';
+const LEGACY_SAVE_KEY = 'yixuan_green_stickman_save_v1';
 
 let titleStage = null;
 let storyStage = null;
@@ -17,23 +18,47 @@ let typeTimer = null;
 let fullText = '';
 let isTyping = false;
 
-// ---- Progress Persistence ----
-function loadSavedIndex() {
+let progress = {
+  idx: 0,
+  maxReached: 0,
+  clearedTiers: []
+};
+
+// ---- Progress Persistence (with v1 migration) ----
+function loadProgress() {
   try {
     const raw = localStorage.getItem(SAVE_KEY);
-    if (!raw) return 0;
-    const n = Number(raw);
-    if (Number.isInteger(n) && n > 0 && n < SCENES.length) return n;
-    return 0;
-  } catch (_) {
-    return 0;
-  }
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      progress.idx = Math.max(0, Math.min(SCENES.length - 1, Number(parsed.idx) || 0));
+      progress.maxReached = Math.max(progress.idx, Math.min(SCENES.length - 1, Number(parsed.maxReached) || 0));
+      progress.clearedTiers = Array.isArray(parsed.clearedTiers) ? parsed.clearedTiers : [];
+      return;
+    }
+    const legacy = localStorage.getItem(LEGACY_SAVE_KEY);
+    if (legacy) {
+      const n = Number(legacy);
+      if (Number.isInteger(n) && n > 0 && n < SCENES.length) {
+        progress.idx = n;
+        progress.maxReached = n;
+      }
+    }
+  } catch (_) {}
 }
 
-function saveProgress(idx) {
+function saveProgress(idx, tierClearId = null) {
+  progress.idx = idx;
+  if (idx > progress.maxReached) progress.maxReached = idx;
+  if (tierClearId && !progress.clearedTiers.includes(tierClearId)) {
+    progress.clearedTiers.push(tierClearId);
+  }
   try {
-    localStorage.setItem(SAVE_KEY, String(idx));
+    localStorage.setItem(SAVE_KEY, JSON.stringify(progress));
   } catch (_) {}
+}
+
+function getTierMeta(tierId) {
+  return TIERS.find(t => t.id === tierId) || TIERS[0];
 }
 
 // ---- Screen Shake Helper ----
@@ -73,7 +98,7 @@ function startTypewriter(text, speakerKey, onDone = null) {
       stopTypewriter();
       if (onDone) onDone();
     }
-  }, 28);
+  }, 26);
 }
 
 function finishTypewriterNow() {
@@ -94,21 +119,51 @@ function showTitleScreen() {
   document.getElementById('screen-story').classList.add('hidden');
   document.getElementById('screen-title').classList.remove('hidden');
 
-  const saved = loadSavedIndex();
   const btnContinue = document.getElementById('btn-continue');
   const saveNote = document.getElementById('save-note');
   const btnStart = document.getElementById('btn-start');
+  const firstNote = document.getElementById('first-play-note');
+  const tierRow = document.getElementById('tier-row');
 
-  if (saved > 0) {
+  const hasSaved = progress.idx > 0 || progress.maxReached > 0;
+
+  if (hasSaved) {
+    const savedScene = SCENES[progress.idx] || SCENES[0];
+    const savedTier = getTierMeta(savedScene.tier);
+
     btnContinue.classList.remove('hidden');
     saveNote.classList.remove('hidden');
-    const savedChapter = SCENES[saved]?.chapter || '';
-    saveNote.textContent = `上次看到：${savedChapter}（第 ${saved + 1} / ${SCENES.length} 頁）`;
+    firstNote.classList.add('hidden');
+    tierRow.classList.remove('hidden');
+
+    saveNote.textContent = `上次進度：${savedTier.label}・${savedScene.chapter}（第 ${progress.idx + 1} / ${SCENES.length} 幕）`;
     btnStart.textContent = '↺ 從頭開始 (START)';
     btnStart.classList.remove('primary');
+
+    // Render clean 3-tier direct selector (初階 / 中階 / 高階)
+    tierRow.innerHTML = TIERS.map(t => {
+      const done = progress.clearedTiers.includes(t.id);
+      return `
+        <button class="tier-btn ${done ? 'cleared' : ''}" data-tier-start="${t.start}">
+          <span class="tier-name">${t.label} ${done ? '✅' : ''}</span>
+          <span class="tier-sub">${t.title}</span>
+          <span class="tier-sub">第 ${t.start + 1}–${t.end + 1} 幕</span>
+        </button>
+      `;
+    }).join('');
+
+    tierRow.querySelectorAll('.tier-btn').forEach(btn => {
+      btn.onclick = () => {
+        SFX.select();
+        startStoryAt(Number(btn.dataset.tierStart));
+      };
+    });
   } else {
+    // First-time visit: Strictly ONE huge START button so Yi-Xuan knows immediately where to click!
     btnContinue.classList.add('hidden');
     saveNote.classList.add('hidden');
+    tierRow.classList.add('hidden');
+    firstNote.classList.remove('hidden');
     btnStart.textContent = '▶ START';
     btnStart.classList.add('primary');
   }
@@ -139,7 +194,8 @@ function startStoryAt(idx) {
 // ---- Render Current Story Scene ----
 function renderScene() {
   const sc = SCENES[currentIdx];
-  saveProgress(currentIdx);
+  const tierMeta = getTierMeta(sc.tier);
+  saveProgress(currentIdx, sc.tierClear || null);
 
   const frame = document.getElementById('comic-frame');
   const dBox = document.getElementById('dialogue-box');
@@ -147,10 +203,13 @@ function renderScene() {
   const navRow = document.getElementById('nav-row');
   const btnPrev = document.getElementById('btn-prev');
   const btnNext = document.getElementById('btn-next');
+  const tierPill = document.getElementById('tier-pill');
 
   frame.classList.remove('gameover-border');
   dBox.classList.remove('gameover-border');
 
+  tierPill.textContent = tierMeta.label;
+  tierPill.className = `tier-pill tier-${sc.tier}`;
   document.getElementById('chapter-label').textContent = sc.chapter;
   document.getElementById('page-counter').textContent = `${currentIdx + 1} / ${SCENES.length}`;
 
@@ -192,14 +251,21 @@ function renderScene() {
       btn.onclick = () => handleChoice(sc.choice.options[Number(btn.dataset.opt)]);
     });
 
-    // While waiting for choice, hide Next so user must pick an option
     btnNext.classList.add('hidden');
     navRow.className = 'nav-row single';
   } else {
     mode = 'story';
     choicePanel.classList.add('hidden');
     btnNext.classList.remove('hidden');
-    btnNext.textContent = sc.isEnding ? '↺ 回到標題畫面' : '下一頁 ▶';
+    if (sc.isEnding) {
+      btnNext.textContent = '↺ 回到標題畫面';
+    } else if (sc.tierClear === 'beginner') {
+      btnNext.textContent = '⚡ 進入中階篇 ▶';
+    } else if (sc.tierClear === 'intermediate') {
+      btnNext.textContent = '🏆 進入高階篇 ▶';
+    } else {
+      btnNext.textContent = '下一頁 ▶';
+    }
   }
 
   startTypewriter(sc.text, sc.speaker);
@@ -230,7 +296,6 @@ function handleChoice(option) {
     btnNext.className = 'ut-btn primary';
     btnNext.textContent = '下一頁 ▶';
   } else {
-    // GAME OVER Bankruptcy Outcome!
     mode = 'gameover';
     SFX.explosion();
     SFX.gameover();
@@ -244,7 +309,6 @@ function handleChoice(option) {
     drawPortrait(document.getElementById('portrait-canvas'), 'green', 'cry');
     startTypewriter(option.gameoverText, 'red');
 
-    // Only ONE clear button: Retry this choice!
     navRow.className = 'nav-row single';
     btnPrev.classList.add('hidden');
     btnNext.classList.remove('hidden');
@@ -266,7 +330,7 @@ function goNext() {
 
   if (mode === 'gameover') {
     SFX.select();
-    renderScene(); // Retry the exact same choice scene!
+    renderScene();
     return;
   }
 
@@ -288,26 +352,30 @@ function goNext() {
 
 // ---- Boot ----
 function init() {
+  loadProgress();
+
   document.getElementById('btn-start').onclick = () => {
     SFX.select();
-    saveProgress(0);
     startStoryAt(0);
   };
 
   document.getElementById('btn-continue').onclick = () => {
     SFX.select();
-    startStoryAt(loadSavedIndex());
+    startStoryAt(progress.idx);
+  };
+
+  document.getElementById('btn-to-title').onclick = () => {
+    SFX.select();
+    showTitleScreen();
   };
 
   document.getElementById('btn-prev').onclick = goPrev;
   document.getElementById('btn-next').onclick = goNext;
 
-  // Tap dialogue box to finish typewriter immediately
   document.getElementById('dialogue-box').onclick = () => {
     finishTypewriterNow();
   };
 
-  // Subtle SFX Mute toggle
   const muteBtn = document.getElementById('btn-mute');
   muteBtn.onclick = () => {
     SFX.setMuted(!SFX.isMuted());
@@ -315,7 +383,6 @@ function init() {
     if (!SFX.isMuted()) SFX.select();
   };
 
-  // Keyboard shortcuts (Undertale feel: Left / Right / Enter / Space)
   window.addEventListener('keydown', e => {
     const inStory = !document.getElementById('screen-story').classList.contains('hidden');
     if (!inStory) return;

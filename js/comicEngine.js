@@ -354,10 +354,18 @@ export function createComicStage(canvas) {
       sceneKey === 'subprime_collapse' ||
       sceneKey === 'five_loans_meteor' ||
       sceneKey === 'gm_domino' ||
+      sceneKey === 'mid_limit_down' ||
+      sceneKey === 'mid_crash_panic' ||
+      sceneKey === 'adv_50x_wick' ||
       sceneKey.startsWith('gameover_')
     ) {
       burst(W * 0.55, H * 0.5, 55, ['#ff4757', '#ff7a2f', '#ffd43b', '#ffffff'], 7, 5);
-    } else if (sceneKey === 'true_ending') {
+    } else if (
+      sceneKey === 'tier1_clear' ||
+      sceneKey === 'tier2_clear' ||
+      sceneKey === 'grand_ending' ||
+      sceneKey === 'true_ending'
+    ) {
       burst(W * 0.5, H * 0.35, 70, ['#22e584', '#ffd43b', '#38bdf8', '#ffffff'], 8, 5);
     }
   }
@@ -1005,10 +1013,641 @@ export function createComicStage(canvas) {
         break;
       }
 
+      // ---------- TIER 1 & TIER 2 CLEAR ----------
+      case 'tier1_clear':
+      case 'tier2_clear': {
+        const isT1 = currentScene === 'tier1_clear';
+        const accent = isT1 ? '#22e584' : '#38bdf8';
+        drawGround(0.84, accent);
+        drawBanner(
+          isT1 ? '🌱 初階通關！(30/90) ➔ 解鎖 ⚡ 中階實戰篇！' : '⚡ 中階通關！(60/90) ➔ 解鎖 🏆 高階大師篇！',
+          accent
+        );
+        if (Math.random() < 0.05) {
+          burst(W * (0.2 + Math.random() * 0.6), H * 0.28, 18, [accent, '#ffd43b', '#ffffff'], 5, 4);
+        }
+        drawStick(ctx, W * 0.5, gy - 36, sc * 1.1, COLORS.green, t, 'cheer');
+        drawStick(ctx, W * 0.3, gy - 36, sc * 0.9, COLORS.blue, t, 'wave');
+        drawStick(ctx, W * 0.7, gy - 36, sc * 0.9, COLORS.yellow, t, 'cheer');
+        ctx.font = '46px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(isT1 ? '🌱✨' : '⚡✨', W * 0.5, H * 0.3 + Math.sin(t * 4) * 5);
+        break;
+      }
+
+      // ================================================================
+      // ⚡ 中階（第 31 ～ 60 幕）視覺漫畫引擎
+      // ================================================================
+      case 'mid_t2_intro': {
+        drawGround();
+        drawBanner('📅 台股規則【T+2 交割】：今天買 ➔ 兩天後早上 10:00 扣款！', '#38bdf8');
+        ['今天(T)', '明天(T+1)', '後天(T+2 扣款!)'].forEach((lbl, idx) => {
+          const x = W * (0.18 + idx * 0.32);
+          ctx.fillStyle = idx === 2 ? '#ff4757' : '#132138';
+          ctx.strokeStyle = idx === 2 ? '#ffd43b' : '#38bdf8';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.roundRect(x - 76, H * 0.3, 152, 76, 12);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '900 16px "Noto Sans TC", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(lbl, x, H * 0.4 + 4);
+        });
+        drawStick(ctx, W * 0.5, gy - 32, sc * 0.9, COLORS.yellow, t, 'point');
+        break;
+      }
+
+      case 'mid_daytrade_red': {
+        drawGround();
+        drawBanner('🎲 無本當沖：戶頭只有 $1,000 卻敢買 $100 萬？！', '#ff4757');
+        drawStick(ctx, W * 0.5, gy - 36, sc, COLORS.red, t, 'hype');
+        ctx.fillStyle = '#ffd43b';
+        ctx.font = '900 22px "Noto Sans TC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('戶頭 $1,000 ➔ 亂按買進 $1,000,000！', W * 0.5, H * 0.32);
+        break;
+      }
+
+      case 'mid_limit_down': {
+        ctx.fillStyle = 'rgba(16, 120, 60, 0.22)';
+        ctx.fillRect(0, 0, W, H);
+        drawGround(0.82, '#ff4757');
+        drawBanner('🔒 股價【跌停鎖死】賣不掉 ➔ T+2 扣不到錢【違約交割】！', '#ff4757');
+        ctx.fillStyle = '#14532d';
+        ctx.strokeStyle = '#22e584';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.roundRect(W * 0.26, H * 0.24, W * 0.48, 86, 12);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '900 26px "Noto Sans TC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🔒 跌停鎖死 -10% (賣不掉!)', W * 0.5, H * 0.35);
+        drawStick(ctx, W * 0.5, gy - 14, sc, COLORS.red, t, 'kneel', { tears: true });
+        break;
+      }
+
+      case 'mid_t2_rule': {
+        drawGround();
+        drawBanner('🛡️ 鐵則：戶頭有多少現金，最多只買多少，絕不無本當沖！', '#22e584');
+        drawStick(ctx, W * 0.35, gy - 36, sc, COLORS.green, t, 'slash', { sword: true });
+        ctx.fillStyle = '#111929';
+        ctx.strokeStyle = '#22e584';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.roundRect(W * 0.52, H * 0.28, W * 0.36, 120, 14);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#22e584';
+        ctx.font = '900 20px "Noto Sans TC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('💵 現金多少買多少', W * 0.7, H * 0.41);
+        ctx.fillStyle = '#ff4757';
+        ctx.fillText('🚫 絕不玩無本當沖', W * 0.7, H * 0.53);
+        break;
+      }
+
+      case 'mid_inflation_boba':
+      case 'mid_inflation_shrink': {
+        drawGround();
+        drawBanner('🧋 通貨膨脹：以前珍奶 $30 ➔ 現在 $70，現金放著會變小！', '#ffd43b');
+        ctx.font = '46px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🧋', W * 0.28, H * 0.42);
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '900 20px "Noto Sans TC", sans-serif';
+        ctx.fillText('以前 $30', W * 0.28, H * 0.56);
+
+        ctx.fillStyle = '#ff7a2f';
+        ctx.font = '900 32px sans-serif';
+        ctx.fillText('➔ 👾 通膨 ➔', W * 0.5, H * 0.46);
+
+        ctx.font = '46px sans-serif';
+        ctx.fillText('🧋', W * 0.74, H * 0.42);
+        ctx.fillStyle = '#ff4757';
+        ctx.font = '900 22px "Noto Sans TC", sans-serif';
+        ctx.fillText('現在 $70！', W * 0.74, H * 0.56);
+
+        drawStick(ctx, W * 0.5, gy - 32, sc * 0.85, currentScene === 'mid_inflation_boba' ? COLORS.yellow : COLORS.green, t, 'think');
+        break;
+      }
+
+      case 'mid_compound_compare':
+      case 'mid_compound_power': {
+        drawGround();
+        drawBanner('❄️ 16 歲複利雪球：每月存 $1,000，早 20 年多滾出 4 倍！', '#22e584');
+        // Huge 16yo snowball vs small 36yo snowball
+        ctx.fillStyle = 'rgba(34,229,132,0.28)';
+        ctx.strokeStyle = '#22e584';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(W * 0.3, H * 0.46, 68 + Math.sin(t * 4) * 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '900 22px "Noto Sans TC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('$342 萬', W * 0.3, H * 0.46);
+        ctx.fillStyle = '#22e584';
+        ctx.font = '900 15px "Noto Sans TC", sans-serif';
+        ctx.fillText('🟢 16 歲開始', W * 0.3, H * 0.55);
+
+        ctx.fillStyle = 'rgba(56,189,248,0.22)';
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(W * 0.72, H * 0.52, 34, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '900 16px "Noto Sans TC", sans-serif';
+        ctx.fillText('$75 萬', W * 0.72, H * 0.53);
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '900 14px "Noto Sans TC", sans-serif';
+        ctx.fillText('🔵 36 歲才開始', W * 0.72, H * 0.66);
+
+        drawStick(ctx, W * 0.52, gy - 36, sc * 0.9, COLORS.green, t, 'cheer');
+        break;
+      }
+
+      case 'mid_single_stock_crash': {
+        drawGround();
+        drawBanner('📱 全壓單一昔日王者 ➔ 被時代淘汰暴跌 -90%！', '#ff4757');
+        ctx.strokeStyle = '#ff4757';
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(W * 0.16, H * 0.28);
+        ctx.lineTo(W * 0.42, H * 0.25);
+        ctx.lineTo(W * 0.76, H * 0.74);
+        ctx.stroke();
+        ctx.fillStyle = '#ff4757';
+        ctx.font = '900 32px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('-90% 💀', W * 0.64, H * 0.4);
+        drawStick(ctx, W * 0.8, gy - 14, sc * 0.9, COLORS.red, t, 'kneel', { tears: true });
+        break;
+      }
+
+      case 'mid_etf_basket':
+      case 'mid_etf_auto_swap':
+      case 'mid_etf_green': {
+        drawGround();
+        drawBanner(
+          currentScene === 'mid_etf_auto_swap'
+            ? '🔄 大盤 ETF 自動汰弱留強：踢掉弱者、換進新王者！'
+            : '🧺 大盤 ETF 大禮包：一次擁有一整籃最強好公司！',
+          '#38bdf8'
+        );
+        const icons = ['💻', '📱', '⚡', '🏥', '🚗', '🍔', '🛰️', '🔋'];
+        icons.forEach((ic, idx) => {
+          const ang = (idx / icons.length) * Math.PI * 2 + t * 0.9;
+          const ox = W * 0.5 + Math.cos(ang) * (W * 0.28);
+          const oy = H * 0.46 + Math.sin(ang) * (H * 0.2);
+          ctx.fillStyle = 'rgba(56,189,248,0.22)';
+          ctx.beginPath();
+          ctx.arc(ox, oy, 22, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.font = '22px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(ic, ox, oy);
+        });
+        drawStick(ctx, W * 0.5, gy - 34, sc * 0.95, currentScene === 'mid_etf_green' ? COLORS.green : COLORS.blue, t, 'wave');
+        break;
+      }
+
+      case 'choice_daytrade': {
+        drawGround();
+        drawBanner('⚡ 中階抉擇 ④：要玩無本當沖，還是用閒錢買 ETF？', '#ffd43b');
+        drawStick(ctx, W * 0.34, gy - 36, sc, COLORS.green, t, 'think');
+        drawStick(ctx, W * 0.66, gy - 36, sc, COLORS.red, t, 'hype');
+        ctx.fillStyle = '#ff4757';
+        ctx.font = '900 20px "Noto Sans TC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🎲 無本當沖拚一天賺 $5,000！', W * 0.66, H * 0.3);
+        break;
+      }
+
+      case 'mid_dca_intro':
+      case 'mid_smile_curve':
+      case 'mid_smile_win':
+      case 'mid_discipline': {
+        drawGround();
+        drawBanner('😊 定期定額「微笑曲線」：大跌撿便宜 ➔ 漲回來大賺！', '#22e584');
+        // Glowing smile curve!
+        ctx.save();
+        ctx.strokeStyle = '#22e584';
+        ctx.lineWidth = 6;
+        ctx.shadowColor = '#22e584';
+        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.moveTo(W * 0.14, H * 0.36);
+        ctx.quadraticCurveTo(W * 0.5, H * 0.84, W * 0.86, H * 0.28);
+        ctx.stroke();
+        ctx.restore();
+        // Buy dots along curve
+        [0.14, 0.32, 0.5, 0.68, 0.86].forEach((r, i) => {
+          const x = W * r;
+          const y = i === 0 ? H * 0.36 : i === 1 ? H * 0.54 : i === 2 ? H * 0.6 : i === 3 ? H * 0.48 : H * 0.28;
+          ctx.fillStyle = i === 2 ? '#ffd43b' : '#38bdf8';
+          ctx.beginPath();
+          ctx.arc(x, y, i === 2 ? 10 : 7, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.fillStyle = '#ffd43b';
+        ctx.font = '900 15px "Noto Sans TC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🏷️ 大跌打折買最多股！', W * 0.5, H * 0.72);
+        drawStick(ctx, W * 0.86, gy - 34, sc * 0.85, COLORS.green, t, 'cheer');
+        break;
+      }
+
+      case 'mid_crash_panic': {
+        ctx.fillStyle = 'rgba(180, 15, 25, 0.24)';
+        ctx.fillRect(0, 0, W, H);
+        drawGround();
+        drawBanner('😱 股災大跌 -35% 在最低點亂賣 ➔ 真的鎖定虧損！', '#ff4757');
+        ctx.strokeStyle = '#ff4757';
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(W * 0.14, H * 0.32);
+        ctx.lineTo(W * 0.48, H * 0.66);
+        ctx.stroke();
+        ctx.strokeStyle = '#22e584';
+        ctx.setLineDash([8, 6]);
+        ctx.beginPath();
+        ctx.moveTo(W * 0.48, H * 0.66);
+        ctx.lineTo(W * 0.86, H * 0.26);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        drawStick(ctx, W * 0.48, gy - 14, sc * 0.9, COLORS.red, t, 'kneel', { tears: true });
+        break;
+      }
+
+      case 'mid_div_hype':
+      case 'mid_div_split':
+      case 'mid_div_fill':
+      case 'mid_div_youth': {
+        drawGround();
+        drawBanner('✂️ 除息真相：股價 $100 配息 $5 ➔ 變成 $95 ＋ 現金 $5！', '#ffd43b');
+        ctx.fillStyle = '#1b2842';
+        ctx.strokeStyle = '#ffd43b';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.roundRect(W * 0.1, H * 0.32, W * 0.22, 86, 12);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '900 22px "Noto Sans TC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('股價 $100', W * 0.21, H * 0.44);
+
+        ctx.fillStyle = '#ffd43b';
+        ctx.font = '900 26px sans-serif';
+        ctx.fillText('➔', W * 0.38, H * 0.44);
+
+        ctx.fillStyle = '#132a2e';
+        ctx.strokeStyle = '#38bdf8';
+        ctx.beginPath();
+        ctx.roundRect(W * 0.44, H * 0.32, W * 0.2, 86, 12);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '900 20px "Noto Sans TC", sans-serif';
+        ctx.fillText('股價 $95', W * 0.54, H * 0.44);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText('＋', W * 0.68, H * 0.44);
+
+        ctx.fillStyle = '#102d1d';
+        ctx.strokeStyle = '#22e584';
+        ctx.beginPath();
+        ctx.roundRect(W * 0.72, H * 0.32, W * 0.18, 86, 12);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#22e584';
+        ctx.fillText('息 $5', W * 0.81, H * 0.44);
+
+        drawStick(ctx, W * 0.5, gy - 30, sc * 0.85, currentScene === 'mid_div_youth' ? COLORS.green : COLORS.yellow, t, 'think');
+        break;
+      }
+
+      case 'choice_crash_hold': {
+        drawGround();
+        drawBanner('⚡ 中階抉擇 ⑤：股災跌 -30%，要亂賣借錢翻本，還是抱緊？', '#ffd43b');
+        drawStick(ctx, W * 0.35, gy - 36, sc, COLORS.green, t, 'slash', { sword: true });
+        drawStick(ctx, W * 0.66, gy - 36, sc, COLORS.red, t, 'shock', { sweat: true });
+        break;
+      }
+
+      case 'mid_scam_ad':
+      case 'mid_scam_actors':
+      case 'mid_scam_fakeapp':
+      case 'mid_scam_165':
+      case 'choice_scam_app': {
+        drawGround();
+        drawBanner(
+          currentScene === 'mid_scam_actors'
+            ? '🎭 50 人 LINE 飆股群：49 個全是暗樁，只有 1 個真肥羊！'
+            : currentScene === 'mid_scam_165'
+              ? '📞 防詐三不＋有懷疑直接問爸媽或打 165 反詐騙！'
+              : '🚨 假老師・假券商 APP・叫你繳「解凍金」＝ 100% 詐騙！',
+          currentScene === 'mid_scam_165' ? '#22e584' : '#ff4757'
+        );
+        // Fake phone screen
+        ctx.fillStyle = '#1f1218';
+        ctx.strokeStyle = currentScene === 'mid_scam_165' ? '#22e584' : '#ff4757';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.roundRect(W * 0.35, H * 0.24, W * 0.3, H * 0.48, 16);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = currentScene === 'mid_scam_165' ? '#22e584' : '#ff7a2f';
+        ctx.font = '900 20px "Noto Sans TC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(currentScene === 'mid_scam_165' ? '📞 165 反詐騙' : '📱 假獲利 APP', W * 0.5, H * 0.4);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '800 15px "Noto Sans TC", sans-serif';
+        ctx.fillText(currentScene === 'mid_scam_165' ? '不加群・不匯款！' : '假帳面 +300%！', W * 0.5, H * 0.54);
+
+        drawStick(ctx, W * 0.22, gy - 36, sc * 0.9, COLORS.green, t, 'slash', { sword: true });
+        drawStick(ctx, W * 0.78, gy - 36, sc * 0.9, COLORS.boss, t, 'hype');
+        break;
+      }
+
+      case 'mid_summary': {
+        drawBanner('⚡ 中階 4 大實戰神招集滿！', '#38bdf8');
+        const items = [
+          { ic: '🚫', t: '不無本當沖', c: '#ff4757' },
+          { ic: '🧺', t: '大盤 ETF', c: '#22e584' },
+          { ic: '✂️', t: '看懂除息', c: '#ffd43b' },
+          { ic: '📞', t: '165 防詐騙', c: '#38bdf8' }
+        ];
+        const cw = Math.min(160, (W - 70) / 4);
+        const sx = (W - (cw * 4 + 36)) / 2;
+        items.forEach((it, i) => {
+          const x = sx + i * (cw + 12);
+          ctx.fillStyle = '#0e172a';
+          ctx.strokeStyle = it.c;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.roundRect(x, H * 0.26, cw, H * 0.52, 14);
+          ctx.fill();
+          ctx.stroke();
+          ctx.font = '38px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(it.ic, x + cw / 2, H * 0.46);
+          ctx.fillStyle = it.c;
+          ctx.font = '900 16px "Noto Sans TC", sans-serif';
+          ctx.fillText(it.t, x + cw / 2, H * 0.65);
+        });
+        break;
+      }
+
+      // ================================================================
+      // 🏆 高階（第 61 ～ 90 幕）視覺漫畫引擎
+      // ================================================================
+      case 'adv_rpg_team':
+      case 'adv_stock_bond':
+      case 'adv_rebalance':
+      case 'adv_rebalance_win':
+      case 'adv_age_ratio': {
+        drawGround();
+        drawBanner(
+          currentScene === 'adv_rebalance' || currentScene === 'adv_rebalance_win'
+            ? '⚖️ 每年【再平衡】：系統自動幫你做到「高賣、低買」！'
+            : '⚔️🛡️ 資產配置像 RPG 隊伍：股票進攻 ＋ 現金公債防守！',
+          '#ffd43b'
+        );
+        // Attack (Green) + Defense (Blue)
+        ctx.fillStyle = 'rgba(34,229,132,0.16)';
+        ctx.strokeStyle = '#22e584';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.roundRect(W * 0.12, H * 0.26, W * 0.34, H * 0.48, 14);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#22e584';
+        ctx.font = '900 20px "Noto Sans TC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('⚔️ 進攻：股票 ETF', W * 0.29, H * 0.38);
+        drawStick(ctx, W * 0.29, gy - 42, sc * 0.85, COLORS.green, t, 'slash', { sword: true });
+
+        ctx.fillStyle = 'rgba(56,189,248,0.16)';
+        ctx.strokeStyle = '#38bdf8';
+        ctx.beginPath();
+        ctx.roundRect(W * 0.54, H * 0.26, W * 0.34, H * 0.48, 14);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#38bdf8';
+        ctx.fillText('🛡️ 防守：現金／公債', W * 0.71, H * 0.38);
+        drawStick(ctx, W * 0.71, gy - 42, sc * 0.85, COLORS.blue, t, 'wave');
+        break;
+      }
+
+      case 'adv_derivatives_intro':
+      case 'adv_50x_wick':
+      case 'adv_options_decay':
+      case 'adv_zero_sum':
+      case 'choice_50x_crypto': {
+        ctx.fillStyle = currentScene === 'adv_50x_wick' ? 'rgba(180,15,25,0.24)' : '#05070c';
+        ctx.fillRect(0, 0, W, H);
+        drawGround();
+        drawBanner(
+          currentScene === 'adv_options_decay'
+            ? '⏳ 選擇權買方會隨時間歸零；賣方一次股災就可能破產！'
+            : '⚡ 50 倍合約：只要瞬間插針晃動【2%】➔ 0.5 秒爆倉歸零！',
+          '#ff4757'
+        );
+        // Candlestick sharp downward wick!
+        ctx.strokeStyle = '#ff4757';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(W * 0.2, H * 0.38);
+        ctx.lineTo(W * 0.44, H * 0.38);
+        ctx.lineTo(W * 0.5, H * 0.74); // Sharp 2% wick!
+        ctx.lineTo(W * 0.56, H * 0.36);
+        ctx.lineTo(W * 0.8, H * 0.28);
+        ctx.stroke();
+        ctx.fillStyle = '#ffd43b';
+        ctx.font = '900 16px "Noto Sans TC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('💥 僅晃動 -2% 插針 ➔ 50X 直接清算！', W * 0.5, H * 0.78);
+        drawStick(ctx, W * 0.26, gy - 36, sc * 0.85, COLORS.green, t, 'think');
+        drawStick(ctx, W * 0.74, gy - 14, sc * 0.85, COLORS.red, t, currentScene === 'adv_50x_wick' ? 'fall' : 'hype', { tears: currentScene === 'adv_50x_wick' });
+        break;
+      }
+
+      case 'adv_brain_intro':
+      case 'adv_fomo_cliff':
+      case 'adv_sunk_cost':
+      case 'adv_survivor_iceberg':
+      case 'adv_brain_shield': {
+        drawGround();
+        const title =
+          currentScene === 'adv_fomo_cliff'
+            ? '🧠 陷阱 ① FOMO 錯失恐懼：衝去追高，剛好買在最高點！'
+            : currentScene === 'adv_sunk_cost'
+              ? '🧠 陷阱 ② 沉沒成本：買爛股不認錯，越攤越平越慘！'
+              : currentScene === 'adv_survivor_iceberg'
+                ? '🧊 陷阱 ③ 倖存者偏差：只看到 1 個炫富，沒看到 999 個破產！'
+                : '🧠 投資最大的敵人是自己的大腦：冷靜就贏 90%！';
+        drawBanner(title, currentScene === 'adv_brain_shield' ? '#22e584' : '#38bdf8');
+
+        if (currentScene === 'adv_survivor_iceberg') {
+          // Iceberg: tiny tip 1 winner, massive underwater 999 bankrupt
+          ctx.fillStyle = 'rgba(56,189,248,0.18)';
+          ctx.fillRect(0, H * 0.44, W, H * 0.56);
+          ctx.fillStyle = '#e2e8f0';
+          ctx.beginPath();
+          ctx.moveTo(W * 0.5, H * 0.22);
+          ctx.lineTo(W * 0.58, H * 0.44);
+          ctx.lineTo(W * 0.42, H * 0.44);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = '#1e3a5f';
+          ctx.beginPath();
+          ctx.moveTo(W * 0.42, H * 0.44);
+          ctx.lineTo(W * 0.58, H * 0.44);
+          ctx.lineTo(W * 0.72, H * 0.82);
+          ctx.lineTo(W * 0.28, H * 0.82);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = '#ffd43b';
+          ctx.font = '900 16px "Noto Sans TC", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('🏆 1 個發炫富文', W * 0.5, H * 0.36);
+          ctx.fillStyle = '#ff4757';
+          ctx.font = '900 22px "Noto Sans TC", sans-serif';
+          ctx.fillText('💀 水面下 999 個默默爆倉破產！', W * 0.5, H * 0.66);
+        } else {
+          drawStick(ctx, W * 0.36, gy - 36, sc, COLORS.green, t, 'think');
+          drawStick(ctx, W * 0.64, gy - 36, sc, COLORS.red, t, 'shock', { sweat: true });
+        }
+        break;
+      }
+
+      case 'adv_checkup_intro':
+      case 'adv_light_cash':
+      case 'adv_light_debt':
+      case 'adv_light_moat':
+      case 'choice_landmine': {
+        drawGround();
+        drawBanner('🚦 防地雷 3 紅綠燈：① 賺現金嗎？ ② 負債高嗎？ ③ 有護城河嗎？', '#ffd43b');
+        const lights = [
+          { lbl: '① 真賺現金', active: currentScene === 'adv_light_cash', col: '#ff4757', icon: '💵' },
+          { lbl: '② 負債過高', active: currentScene === 'adv_light_debt', col: '#ff7a2f', icon: '⛓️' },
+          { lbl: '③ 強護城河', active: currentScene === 'adv_light_moat', col: '#22e584', icon: '🏰' }
+        ];
+        lights.forEach((lt, idx) => {
+          const cx = W * (0.25 + idx * 0.25);
+          ctx.fillStyle = lt.active ? lt.col : '#162136';
+          ctx.strokeStyle = lt.col;
+          ctx.lineWidth = lt.active ? 5 : 2.5;
+          ctx.beginPath();
+          ctx.arc(cx, H * 0.44, 42, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.font = '32px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(lt.icon, cx, H * 0.44);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '900 15px "Noto Sans TC", sans-serif';
+          ctx.fillText(lt.lbl, cx, H * 0.62);
+        });
+        drawStick(ctx, W * 0.12, gy - 32, sc * 0.85, COLORS.green, t, 'point');
+        break;
+      }
+
+      case 'adv_fee_hole':
+      case 'adv_fee_explain':
+      case 'adv_low_cost':
+      case 'adv_buffett_turtle':
+      case 'adv_invest_self': {
+        drawGround();
+        drawBanner(
+          currentScene === 'adv_invest_self'
+            ? '🌟 16 歲回報率最高投資：自己的健康 ＋ 專長能力！'
+            : currentScene === 'adv_low_cost' || currentScene === 'adv_buffett_turtle'
+              ? '🐢 高階秘密武器：低管理費大盤 ETF ＋ 少動多抱！'
+              : '🕳️ 頻繁殺進殺出 200 次 ➔ 獲利全被手續費與交易稅吃光！',
+          currentScene === 'adv_fee_hole' || currentScene === 'adv_fee_explain' ? '#ff4757' : '#22e584'
+        );
+        if (currentScene === 'adv_fee_hole' || currentScene === 'adv_fee_explain') {
+          ctx.fillStyle = '#000000';
+          ctx.strokeStyle = '#ff4757';
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.ellipse(W * 0.5, gy - 12, 96, 26, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = '#ff4757';
+          ctx.font = '900 18px "Noto Sans TC", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('💸 手續費＋交易稅黑洞', W * 0.5, gy - 7);
+          drawStick(ctx, W * 0.25, gy - 36, sc, COLORS.red, t, 'cry', { tears: true });
+        } else {
+          drawStick(ctx, W * 0.5, gy - 36, sc * 1.05, COLORS.green, t, 'cheer');
+          ctx.font = '40px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(currentScene === 'adv_invest_self' ? '🧠 💪 🌱' : '🐢 🏆 ✨', W * 0.5, H * 0.3);
+        }
+        break;
+      }
+
+      case 'adv_roadmap_16':
+      case 'adv_roadmap_18':
+      case 'adv_team_ready': {
+        drawGround();
+        drawBanner('🗺️ 16 歲 ➔ 18 歲 ➔ 30 歲：小綠的終身財富成長藍圖！', '#22e584');
+        const steps = ['16歲：學觀念＋找爸媽', '18歲：6個月備用金', '長期：定期定額 ETF'];
+        steps.forEach((st, i) => {
+          const x = W * (0.18 + i * 0.32);
+          const y = gy - 40 - i * 44;
+          ctx.fillStyle = '#112236';
+          ctx.strokeStyle = i === 2 ? '#ffd43b' : '#22e584';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.roundRect(x - 86, y - 34, 172, 42, 10);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '900 13px "Noto Sans TC", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(st, x, y - 8);
+        });
+        drawStick(ctx, W * 0.36, gy - 36, sc * 0.9, COLORS.green, t, 'slash', { sword: true });
+        drawStick(ctx, W * 0.2, gy - 36, sc * 0.85, COLORS.blue, t, 'wave');
+        drawStick(ctx, W * 0.52, gy - 36, sc * 0.85, COLORS.yellow, t, 'point');
+        break;
+      }
+
+      case 'choice_final_boss': {
+        ctx.fillStyle = 'rgba(140, 15, 25, 0.25)';
+        ctx.fillRect(0, 0, W, H);
+        drawGround(0.84, '#ff4757');
+        drawBanner('👑 最終 BOSS 決戰：高槓桿 × 假老師 × 五貸同堂大魔王！', '#ff4757');
+        drawStick(ctx, W * 0.28, gy - 36, sc * 1.05, COLORS.green, t, 'slash', { sword: true });
+        drawStick(ctx, W * 0.72, gy - 54, sc * 1.45, COLORS.boss, t, 'hype');
+        ctx.fillStyle = '#ff4757';
+        ctx.font = '900 22px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('💀 破產大魔王 LV.99', W * 0.72, H * 0.26);
+        break;
+      }
+
       // ---------- GAME OVER BANKRUPTCY SCENES ----------
       case 'gameover_leverage':
       case 'gameover_fiveloans':
-      case 'gameover_scam': {
+      case 'gameover_scam':
+      case 'gameover_daytrade':
+      case 'gameover_50x':
+      case 'gameover_landmine':
+      case 'gameover_boss': {
         ctx.fillStyle = '#160408';
         ctx.fillRect(0, 0, W, H);
         drawGround(0.84, '#ff4757');
@@ -1018,41 +1657,42 @@ export function createComicStage(canvas) {
         ctx.fillText('GAME OVER', W * 0.5, H * 0.24);
         ctx.font = '900 18px "Noto Sans TC", sans-serif';
         ctx.fillStyle = '#fecdd3';
-        ctx.fillText(
-          currentScene === 'gameover_leverage'
-            ? '💥 10 倍槓桿跌 -15% ➔ 強制斷頭＋負債！'
-            : currentScene === 'gameover_fiveloans'
-              ? '🏠 五貸同堂繳不出利息 ➔ 斷頭＋房子法拍！'
-              : '🚨 高槓桿＋假老師陷阱 ➔ 存款 3 天歸零！',
-          W * 0.5,
-          H * 0.37
-        );
+        const reasonMap = {
+          gameover_leverage: '💥 10 倍槓桿跌 -15% ➔ 強制斷頭＋負債！',
+          gameover_fiveloans: '🏠 五貸同堂繳不出利息 ➔ 斷頭＋房子法拍！',
+          gameover_scam: '🚨 假老師・假 APP 詐騙 ➔ 存款瞬間歸零！',
+          gameover_daytrade: '🔒 無本當沖遇跌停鎖死 ➔ 違約交割信用全毀！',
+          gameover_50x: '⚡ 50 倍合約僅晃動 -2% ➔ 0.5 秒強制爆倉！',
+          gameover_landmine: '💣 連虧高負債地雷股下市 ➔ 股票變壁紙！',
+          gameover_boss: '💀 貪心碰槓桿與借貸 ➔ 遭破產魔王吞噬！'
+        };
+        ctx.fillText(reasonMap[currentScene] || '💀 財務 HP 歸零破產！', W * 0.5, H * 0.37);
         drawHPBar(ctx, W * 0.34, H * 0.44, W * 0.32, '💀 你的財務 HP', 0, 100, '#ff4757');
         drawStick(ctx, W * 0.5, gy - 8, sc, COLORS.green, t, 'kneel', { tears: true });
         break;
       }
 
-      // ---------- TRUE ENDING ----------
+      // ---------- GRAND TRUE ENDING (90/90) ----------
+      case 'grand_ending':
       case 'true_ending': {
-        drawGround(0.84, '#22e584');
-        drawBanner('🏆 TRUE ENDING：易軒（小綠）成為防破產大師！', '#ffd43b');
-        if (Math.random() < 0.06) {
-          burst(W * (0.15 + Math.random() * 0.7), H * (0.2 + Math.random() * 0.3), 24, ['#22e584', '#ffd43b', '#38bdf8', '#ffffff'], 5, 4);
+        drawGround(0.84, '#ffd43b');
+        drawBanner('👑 GRAND TRUE ENDING：易軒完成【初・中・高階】全部 90 幕！', '#ffd43b');
+        if (Math.random() < 0.08) {
+          burst(W * (0.12 + Math.random() * 0.76), H * (0.18 + Math.random() * 0.32), 26, ['#22e584', '#ffd43b', '#38bdf8', '#ffffff'], 5.5, 4);
         }
-        drawStick(ctx, W * 0.5, gy - 36, sc * 1.1, COLORS.green, t, 'cheer');
+        drawStick(ctx, W * 0.5, gy - 36, sc * 1.15, COLORS.green, t, 'cheer');
         drawStick(ctx, W * 0.32, gy - 36, sc * 0.92, COLORS.blue, t, 'cheer');
         drawStick(ctx, W * 0.68, gy - 36, sc * 0.92, COLORS.yellow, t, 'cheer');
-        // Funny Red holding white surrender sign!
         drawStick(ctx, W * 0.86, gy - 36, sc * 0.8, COLORS.red, t, 'idle', { sweat: true });
         ctx.fillStyle = '#ffffff';
-        ctx.fillRect(W * 0.76, H * 0.32, W * 0.21, 34);
+        ctx.fillRect(W * 0.75, H * 0.32, W * 0.22, 34);
         ctx.fillStyle = '#111827';
         ctx.font = '900 12px "Noto Sans TC", sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('我再也不開槓桿了!', W * 0.865, H * 0.32 + 21);
+        ctx.fillText('我徹底戒掉槓桿了!', W * 0.86, H * 0.32 + 21);
 
-        ctx.font = '44px sans-serif';
-        ctx.fillText('🏆', W * 0.5, H * 0.3 + Math.sin(t * 4) * 5);
+        ctx.font = '46px sans-serif';
+        ctx.fillText('👑', W * 0.5, H * 0.28 + Math.sin(t * 4) * 5);
         break;
       }
 
