@@ -106,7 +106,7 @@ button {
 .title-stage-box {
   width: 100%;
   max-width: 640px;
-  aspect-ratio: 16 / 8.2;
+  aspect-ratio: 800 / 440;
   border: 4px solid var(--white);
   background: #05070c;
   overflow: hidden;
@@ -269,32 +269,49 @@ button {
 
 .story-meta-bar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  flex-direction: column;
+  gap: 6px;
   padding: 0 2px;
   font-size: 0.95rem;
   font-weight: 800;
   color: var(--muted);
 }
 
+.meta-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+}
+
 .chapter-label {
   color: var(--green);
+  line-height: 1.35;
 }
 
 .meta-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.page-counter {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 .mute-tiny-btn {
   background: transparent;
   border: 2px solid rgba(255, 255, 255, 0.28);
   color: var(--muted);
-  padding: 3px 9px;
-  font-size: 0.85rem;
+  padding: 4px 10px;
+  font-size: 0.84rem;
   font-weight: 800;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .mute-tiny-btn:hover {
@@ -302,11 +319,11 @@ button {
   color: var(--white);
 }
 
-/* 1 Big Animated Comic Panel */
+/* 1 Big Animated Comic Panel (exact 800:440 = 20:11 ratio on all screens!) */
 .comic-frame {
   width: 100%;
-  aspect-ratio: 16 / 8.8;
-  max-height: 450px;
+  aspect-ratio: 800 / 440;
+  max-height: 460px;
   border: 4px solid var(--white);
   background: #05070c;
   overflow: hidden;
@@ -371,7 +388,7 @@ button {
 
 .dialogue-text {
   margin: 0;
-  font-size: clamp(1.16rem, 2.4vw, 1.38rem);
+  font-size: clamp(1.08rem, 2.4vw, 1.38rem);
   font-weight: 800;
   color: var(--white);
   white-space: pre-line;
@@ -409,11 +426,11 @@ button {
 }
 
 .ut-choice-btn {
-  padding: 18px 16px;
+  padding: 16px 14px;
   background: #000000;
   color: var(--white);
   border: 4px solid var(--yellow);
-  font-size: 1.12rem;
+  font-size: 1.06rem;
   font-weight: 900;
   text-align: left;
   display: flex;
@@ -438,7 +455,7 @@ button {
 .nav-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  gap: 12px;
   margin-top: 2px;
 }
 
@@ -447,32 +464,70 @@ button {
 }
 
 .nav-row .ut-btn {
-  font-size: 1.2rem;
-  padding: 15px 18px;
+  font-size: 1.16rem;
+  padding: 14px 16px;
 }
 
-/* ---------- Responsive ---------- */
+/* ---------- Responsive (Pixel 8 / Pixel 11 & Mobile Phones) ---------- */
 @media (max-width: 680px) {
   .app-container {
-    padding: 12px 12px 24px;
+    padding: 10px 12px 24px;
     justify-content: flex-start;
   }
+  .story-screen {
+    gap: 12px;
+  }
+  .story-meta-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    font-size: 0.88rem;
+  }
+  .meta-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .chapter-label {
+    font-size: 0.92rem;
+  }
+  .tier-pill {
+    margin-right: 0;
+    white-space: nowrap;
+  }
   .comic-frame {
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 800 / 440;
+    border-width: 3px;
   }
   .ut-dialogue-box {
-    padding: 14px;
+    padding: 13px;
     gap: 12px;
-    min-height: 132px;
+    min-height: 124px;
+    border-width: 3px;
   }
   .portrait-wrap {
-    width: 72px;
-    height: 72px;
+    width: 68px;
+    height: 68px;
+  }
+  .dialogue-text {
+    font-size: 1.04rem;
+    line-height: 1.55;
   }
   .choice-grid {
     grid-template-columns: 1fr;
   }
-  .story-meta-bar {
-    font-size: 0.86rem;
+  .tier-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .tier-btn {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 11px 14px;
+  }
+  .nav-row .ut-btn {
+    font-size: 1.08rem;
+    padding: 13px 12px;
   }
 }

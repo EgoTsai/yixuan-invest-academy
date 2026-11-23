@@ -305,8 +305,9 @@ export function drawPortrait(canvas, speaker, mood = 'happy') {
 // ---- Main 60fps Comic Stage Controller ----
 export function createComicStage(canvas) {
   const ctx = canvas.getContext('2d');
-  let W = 800;
-  let H = 420;
+  // Fixed virtual manga coordinate system so desktop & mobile (Pixel 8/11) render identically with ZERO overlap!
+  const W = 800;
+  const H = 440;
   let currentScene = 'intro_green';
   let sceneTime = 0;
   let t = 0;
@@ -315,12 +316,12 @@ export function createComicStage(canvas) {
 
   function resize() {
     const rect = canvas.parentElement.getBoundingClientRect();
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    W = Math.max(320, Math.floor(rect.width));
-    H = Math.max(200, Math.floor(rect.height));
-    canvas.width = Math.floor(W * dpr);
-    canvas.height = Math.floor(H * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    const cssW = Math.max(280, rect.width);
+    const cssH = Math.max(154, rect.height);
+    canvas.width = Math.round(cssW * dpr);
+    canvas.height = Math.round(cssH * dpr);
+    ctx.setTransform((cssW * dpr) / W, 0, 0, (cssH * dpr) / H, 0, 0);
   }
 
   resize();
@@ -385,15 +386,25 @@ export function createComicStage(canvas) {
 
   function drawBanner(text, color = '#ffd43b') {
     ctx.save();
-    ctx.fillStyle = 'rgba(255,255,255,0.08)';
+    const padX = 22;
+    const boxW = W - padX * 2;
+    ctx.fillStyle = 'rgba(255,255,255,0.09)';
     ctx.beginPath();
-    ctx.roundRect(W * 0.14, 14, W * 0.72, 36, 10);
+    ctx.roundRect(padX, 14, boxW, 42, 11);
     ctx.fill();
+
+    // Auto-fit font size so text NEVER overflows the pill
+    let fontSize = 20;
+    ctx.font = `900 ${fontSize}px "Noto Sans TC", sans-serif`;
+    while (fontSize > 13 && ctx.measureText(text).width > boxW - 28) {
+      fontSize -= 1;
+      ctx.font = `900 ${fontSize}px "Noto Sans TC", sans-serif`;
+    }
+
     ctx.fillStyle = color;
-    ctx.font = `900 ${Math.min(18, W * 0.032)}px "Noto Sans TC", sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(text, W * 0.5, 32);
+    ctx.fillText(text, W * 0.5, 35);
     ctx.restore();
   }
 
